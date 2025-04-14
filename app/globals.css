@@ -1,2 +1,7 @@
 @import "tailwindcss";
 
+@layer base {
+  :root {
+    --background: 60 30% 96%;
+  }
+}
