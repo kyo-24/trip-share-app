@@ -12,7 +12,7 @@ import {
   Users,
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+// import { usePathname } from "next/navigation";
 
 const navigation = [
   { name: "ダッシュボード", href: "/", icon: Home },
@@ -29,7 +29,7 @@ const bottomNavigation = [
 ];
 
 export function SideNav() {
-  const pathname = usePathname();
+  // const pathname = usePathname();
 
   return (
     <div
@@ -39,7 +39,7 @@ export function SideNav() {
     >
       <nav className="flex-1 px-4 py-4 space-y-1">
         {navigation.map((item) => {
-          const isActive = pathname === item.href;
+          // const isActive = pathname === item.href;
           return (
             <Link
               key={item.name}
