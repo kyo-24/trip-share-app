@@ -14,7 +14,6 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-
 const navigation = [
   { name: "ダッシュボード", href: "/", icon: Home },
   { name: "旅行プラン", href: "/trips", icon: Compass },
@@ -46,16 +45,18 @@ export function SideNav() {
               key={item.name}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 px-3 py-3 text-sm rounded-md transition-colors hover:bg-amber-200",
+                "flex items-center gap-3 px-3 py-3 text-sm rounded-md transition-colors hover:bg-amber-200"
                 // isActive
                 //   ? "bg-blue-500 text-primary-foreground"
                 //   : "text-muted-foreground hover:bg-muted"
               )}
             >
               <item.icon className="h-5 w-5 shrink-0" />
-              <span className={cn(
-                "transition-opacity duration-300 text-gray-600 font-bold"
-              )}>
+              <span
+                className={cn(
+                  "transition-opacity duration-300 text-gray-600 font-bold"
+                )}
+              >
                 {item.name}
               </span>
             </Link>
@@ -71,9 +72,11 @@ export function SideNav() {
               className="flex items-center gap-3 px-3 py-3 text-sm text-muted-foreground rounded-md hover:bg-muted transition-colors hover:bg-amber-200"
             >
               <item.icon className="h-5 w-5 shrink-0" />
-              <span className={cn(
-                "transition-opacity duration-300 text-gray-600 font-bold"
-              )}>
+              <span
+                className={cn(
+                  "transition-opacity duration-300 text-gray-600 font-bold"
+                )}
+              >
                 {item.name}
               </span>
             </Link>

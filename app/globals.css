@@ -2,6 +2,15 @@
 
 @layer base {
   :root {
-    --background: 60 30% 96%;
+    --background: #f5e9d3;
+    --foreground: #ef4444;
   }
+}
+
+@theme {
+  --color-primary: #000;
+  --color-secondary: ;
+  --color-border: #e0e0e0;
+  --color-destructive: #ef4444;
+  --color-popover: #fff;
 }
