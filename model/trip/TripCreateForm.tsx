@@ -84,13 +84,13 @@ const TripCreateForm = () => {
                         </Button>
                     </div>
                     ) : ( */}
-              <div className="border border-dashed border-black/30 rounded-md p-8 text-center cursor-pointer hover:bg-muted/50 transition-colors">
+              <div className="border border-dashed border-black/30 rounded-md p-8 text-center cursor-pointer hover:bg-gray/10 duration-500 transition-color bg-white">
                 <div className="flex flex-col items-center gap-2">
-                  <div className="p-3 rounded-full bg-secondary">
-                    <ImageIcon className="h-6 w-6 text-secondary-foreground" />
+                  <div className="p-3 rounded-full bg-primary/10">
+                    <ImageIcon className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <p className="font-medium">画像をアップロード</p>
+                    <p className="font-semibold">画像をアップロード</p>
                     <p className="text-sm text-muted-foreground mt-1">
                       クリックして画像を選択するか、ここにドラッグ&ドロップしてください
                     </p>
@@ -139,7 +139,7 @@ const TripCreateForm = () => {
                     )}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
+                <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
                     mode="single"
                     selected={startDate}
@@ -192,8 +192,8 @@ const TripCreateForm = () => {
             <Subtitle title="メンバー" />
             <div className="flex gap-2 mt-1.5">
               <Input placeholder="メンバー名を入力" className="flex-1" />
-              <Button type="button" size="icon" variant="secondary">
-                <Plus className="h-4 w-4" />
+              <Button type="button" size="icon" variant="default">
+                <Plus className="h-4 w-4 text-white" />
               </Button>
             </div>
 

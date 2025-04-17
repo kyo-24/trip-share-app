@@ -34,7 +34,7 @@ export function SideNav() {
   return (
     <div
       className={cn(
-        "flex flex-col bg-card border-r border-gray-300 transition-all duration-500 w-64 pt-16"
+        "flex flex-col bg-white border-r border-border transition-all duration-500 w-64 pt-16 shadow-lg"
       )}
     >
       <nav className="flex-1 px-4 py-4 space-y-1">
@@ -45,13 +45,13 @@ export function SideNav() {
               key={item.name}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 px-3 py-3 text-sm rounded-md transition-colors hover:bg-amber-200"
+                "flex items-center gap-3 px-3 py-3 text-sm rounded-md transition-colors hover:bg-primary/10"
                 // isActive
                 //   ? "bg-blue-500 text-primary-foreground"
                 //   : "text-muted-foreground hover:bg-muted"
               )}
             >
-              <item.icon className="h-5 w-5 shrink-0" />
+              <item.icon className="h-5 w-5 shrink-0 text-primary" />
               <span
                 className={cn(
                   "transition-opacity duration-300 text-gray-600 font-bold"
@@ -69,16 +69,12 @@ export function SideNav() {
             <Link
               key={item.name}
               href={item.href}
-              className="flex items-center gap-3 px-3 py-3 text-sm text-muted-foreground rounded-md hover:bg-muted transition-colors hover:bg-amber-200"
+              className="flex items-center gap-3 px-3 py-3 text-sm text-muted-foreground rounded-md hover:bg-muted transition-colors hover:bg-primary/10"
             >
-              <item.icon className="h-5 w-5 shrink-0" />
-              <span
-                className={cn(
-                  "transition-opacity duration-300 text-gray-600 font-bold"
-                )}
-              >
+              <item.icon className="h-5 w-5 shrink-0 text-primary" />
+              <h2 className={cn("transition-opacity duration-300 font-bold")}>
                 {item.name}
-              </span>
+              </h2>
             </Link>
           ))}
         </nav>
