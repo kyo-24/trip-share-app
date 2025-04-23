@@ -2,6 +2,29 @@
 
 @layer base {
   :root {
-    --background: 60 30% 96%;
+    --background: #f0fbfd;
+    --text: #6b7280;
+    --title: #4f535c;
   }
+
+  body {
+    background-color: var(--background);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  h1,
+  h2,
+  h3 {
+    color: var(--title);
+  }
+}
+
+@theme {
+  --color-primary: #0ca5cd;
+  --color-ring: #0891b2;
+  --color-secondary: #f0fbfd;
+  --color-border: #e0e0e0;
+  --color-destructive: #ef4444;
+  --color-gray: #6b7280;
 }
