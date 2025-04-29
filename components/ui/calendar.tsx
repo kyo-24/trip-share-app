@@ -81,7 +81,7 @@ function Calendar({
         }, [yearRange])
     );
 
-    const { onNextClick, onPrevClick, startMonth, endMonth } = props;
+    const { onPrevClick, startMonth, endMonth } = props;
 
     const columnsDisplayed = navView === "years" ? 1 : numberOfMonths;
 
@@ -228,7 +228,6 @@ function Calendar({
                 ),
                 MonthGrid: ({ className, children, ...props }) => (
                     <MonthGrid
-                        children={children}
                         className={className}
                         displayYears={displayYears}
                         startMonth={startMonth}
@@ -236,7 +235,9 @@ function Calendar({
                         navView={navView}
                         setNavView={setNavView}
                         {...props}
-                    />
+                    >
+                        {children}
+                    </MonthGrid>
                 ),
             }}
             numberOfMonths={columnsDisplayed}
