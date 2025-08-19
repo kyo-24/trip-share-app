@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { TabsContent } from "@/components/ui/tabs";
 import { Pencil } from "lucide-react";
-import React from "react";
 import { tripDataProps } from "../types";
 
 const Overview = ({ tripData }: { tripData: tripDataProps }) => {
@@ -30,7 +29,9 @@ const Overview = ({ tripData }: { tripData: tripDataProps }) => {
                         <label className="block text-sm font-medium text-gray-700">
                             旅行先
                         </label>
-                        <p className="mt-1 text-gray-900"></p>
+                        <p className="mt-1 text-gray-900">
+                            {tripData.destination}
+                        </p>
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-gray-700">
@@ -45,7 +46,11 @@ const Overview = ({ tripData }: { tripData: tripDataProps }) => {
                         <label className="block text-sm font-medium text-gray-700">
                             予算
                         </label>
-                        <p className="mt-1 text-gray-900"></p>
+                        <p className="mt-1 text-gray-900">
+                            {tripData.budget
+                                ? tripData.budget.toLocaleString() + "円"
+                                : ""}
+                        </p>
                     </div>
                 </div>
             </div>

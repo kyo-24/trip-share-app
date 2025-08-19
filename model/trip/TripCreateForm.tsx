@@ -1,6 +1,5 @@
 "use client";
 
-import Pulldown from "@/components/common/Pulldown";
 import Subtitle from "@/components/common/Subtitle";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -11,6 +10,7 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
+import { createTrip } from "@/lib/actions/trips";
 import {
     CalendarIcon,
     ChevronLeft,
@@ -50,12 +50,13 @@ const TripCreateForm = () => {
                 <h1 className="text-2xl font-bold">新しい旅行プランを作成</h1>
             </div>
 
-            <form className="space-y-8">
+            <form className="space-y-8" action={createTrip}>
                 <div className="space-y-6">
                     <div>
                         <Subtitle title="旅行タイトル" />
                         <Input
                             id="title"
+                            name="title"
                             placeholder="例: 家族で行く京都旅行"
                             className="mt-1.5"
                             required
@@ -111,6 +112,7 @@ const TripCreateForm = () => {
                             {/* )} */}
                             <input
                                 type="file"
+                                name="coverImageUrl"
                                 ref={fileInputRef}
                                 accept="image/*"
                                 className="hidden"
@@ -120,7 +122,13 @@ const TripCreateForm = () => {
 
                     <div>
                         <Subtitle title="旅行先" required />
-                        <Pulldown />
+                        <Input
+                            id="destination"
+                            name="destination"
+                            placeholder="例: 京都"
+                            className="mt-1.5"
+                            required
+                        />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -154,6 +162,11 @@ const TripCreateForm = () => {
                                     />
                                 </PopoverContent>
                             </Popover>
+                            <Input
+                                type="hidden"
+                                name="startDate"
+                                value={startDate ? startDate.toISOString() : ""}
+                            />
                         </div>
 
                         <div>
@@ -183,6 +196,11 @@ const TripCreateForm = () => {
                                     />
                                 </PopoverContent>
                             </Popover>
+                            <Input
+                                type="hidden"
+                                name="endDate"
+                                value={endDate ? endDate.toISOString() : ""}
+                            />
                         </div>
                     </div>
 
@@ -190,6 +208,7 @@ const TripCreateForm = () => {
                         <Subtitle title="予算（円）" />
                         <Input
                             id="budget"
+                            name="budget"
                             type="number"
                             placeholder="例: 100000"
                             className="mt-1.5"
@@ -233,6 +252,7 @@ const TripCreateForm = () => {
                         <Subtitle title="メモ" />
                         <Textarea
                             id="notes"
+                            name="description"
                             placeholder="旅行に関する備考や注意点など"
                             rows={4}
                             className="mt-1.5"

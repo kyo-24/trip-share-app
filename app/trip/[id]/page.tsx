@@ -1,3 +1,4 @@
+import { getTripDetail } from "@/lib/getTrip";
 import TripDetailForm from "@/model/trip/TripDetailForm";
 
 interface Props {
@@ -9,16 +10,13 @@ interface Props {
 export default async function TripDetail({ params }: Props) {
     const { id } = await params;
     console.log(id);
-    const tripData = {
-        title: "北海道旅行",
-        coverImage:
-            "https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&q=80&w=1200",
-        startDate: new Date("2025-04-01"),
-        endDate: new Date("2025-04-05"),
-        description: "北海道への旅行",
-        tags: ["観光", "グルメ"],
-        participants: ["参加者1", "参加者2", "参加者3"],
-    };
+    const tripData = await getTripDetail(Number(id));
+
+    console.log(tripData);
+
+    if (!tripData) {
+        return <div>旅行が見つかりませんでした。</div>;
+    }
 
     const scheduleData = [
         {

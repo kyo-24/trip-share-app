@@ -7,32 +7,9 @@ import {
 } from "@/components/ui/card";
 import { syncUser } from "@/lib/actions/sync";
 import { getUserData } from "@/lib/auth";
+import { getTrips } from "@/lib/getTrip";
 import { PlusCircle } from "lucide-react";
 import Link from "next/link";
-
-const TripDummyData = [
-    {
-        id: 1,
-        title: "北海道旅行",
-        date: "2025年4月1日",
-        location: "北海道札幌市",
-        participants: 3,
-    },
-    {
-        id: 2,
-        title: "沖縄旅行",
-        date: "2025年6月15日",
-        location: "沖縄県那覇市",
-        participants: 5,
-    },
-    {
-        id: 3,
-        title: "東京旅行",
-        date: "2025年8月20日",
-        location: "東京都新宿区",
-        participants: 2,
-    },
-];
 
 export default async function Home() {
     const userResult = await getUserData();
@@ -41,6 +18,11 @@ export default async function Home() {
     if (!userResult.success) {
         await syncUser();
     }
+
+    // プラン一覧を取得
+    const trips = await getTrips();
+
+    console.log(trips);
     return (
         <div className="p-6">
             <div className="flex justify-between items-center px-4">
@@ -54,7 +36,7 @@ export default async function Home() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 py-10">
-                {TripDummyData.map((trip) => (
+                {trips?.map((trip) => (
                     <Link href={`/trip/${trip.id}`} key={trip.id}>
                         <Card className="py-0 border-0 shadow-lg cursor-pointer bg-white">
                             <CardHeader className="px-0">
@@ -65,9 +47,15 @@ export default async function Home() {
                                     {trip.title}
                                 </h2>
                                 <div className="text-sm text-gray-500 mt-2">
-                                    <p>{trip.date}</p>
-                                    <p>{trip.location}</p>
-                                    <p>{trip.participants}人の参加者</p>
+                                    <p>
+                                        日時：
+                                        {trip.startDate.toLocaleDateString()}〜
+                                        {trip.endDate.toLocaleDateString()}
+                                    </p>
+                                    <p>メモ：{trip.destination}</p>
+                                    <p>
+                                        予算：{trip.budget.toLocaleString()}円
+                                    </p>
                                 </div>
                             </CardContent>
                             <CardFooter className="flex justify-between"></CardFooter>

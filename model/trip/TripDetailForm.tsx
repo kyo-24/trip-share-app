@@ -1,14 +1,12 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Clock, ImageIcon, MapPin, Plus, Users } from "lucide-react";
-import React from "react";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Clock, MapPin, Users } from "lucide-react";
+import Album from "./components/Album";
 import Overview from "./components/Overview";
 import Schedule from "./components/Schedule";
-import { scheduleDataProps, tripDataProps } from "./types";
 import TodoList from "./components/TodoList";
-import Album from "./components/Album";
+import { scheduleDataProps, tripDataProps } from "./types";
 
 const TripDetailForm = ({
     tripData,
@@ -22,7 +20,7 @@ const TripDetailForm = ({
             {/* Header */}
             <div
                 className="h-64  bg-center relative"
-                style={{ backgroundImage: `url(${tripData.coverImage})` }}
+                style={{ backgroundImage: `url(${tripData.coverImageUrl})` }}
             >
                 <div className="absolute inset-0 bg-black bg-opacity-40">
                     <div className="container mx-auto px-6 h-full flex items-end pb-8">
@@ -47,7 +45,7 @@ const TripDetailForm = ({
                                 </div>
                                 <div className="flex items-center">
                                     <Users className="w-4 h-4 mr-1" />
-                                    {tripData.participants}
+                                    {/* 参加メンバーの人数表示 */}
                                 </div>
                             </div>
                         </div>
