@@ -18,12 +18,12 @@ export type tripDataProps = {
     };
 };
 
-export type scheduleDataProps = {
+export type ScheduleItem = {
     id: number;
-    day: string;
-    items: {
-        time: string;
-        title: string;
-        description: string;
-    }[];
+    tripId: number;
+    date: Date;
+    startTime: Date;
+    endTime: Date;
+    title: string;
+    description: string;
 };

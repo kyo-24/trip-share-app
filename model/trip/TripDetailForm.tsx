@@ -6,14 +6,14 @@ import Album from "./components/Album";
 import Overview from "./components/Overview";
 import Schedule from "./components/Schedule";
 import TodoList from "./components/TodoList";
-import { scheduleDataProps, tripDataProps } from "./types";
+import { ScheduleItem, tripDataProps } from "./types";
 
 const TripDetailForm = ({
     tripData,
     scheduleData,
 }: {
     tripData: tripDataProps;
-    scheduleData: scheduleDataProps[];
+    scheduleData: ScheduleItem[] | null;
 }) => {
     return (
         <div className="min-h-screen bg-secondary">
@@ -85,7 +85,10 @@ const TripDetailForm = ({
                         </TabsList>
 
                         <Overview tripData={tripData} />
-                        <Schedule scheduleData={scheduleData} />
+                        <Schedule
+                            scheduleData={scheduleData}
+                            tripId={tripData.id}
+                        />
                         <TodoList />
                         <Album />
                     </Tabs>

@@ -1,73 +1,30 @@
-import { TabsContent } from "@/components/ui/tabs";
-import { Calendar, Clock, Plus, X } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import { scheduleDataProps } from "../types";
-import { format } from "date-fns";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { TabsContent } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import { createSchedule, deleteSchedule } from "@/lib/actions/schedules";
+import { format } from "date-fns";
+import { Calendar, Clock, X } from "lucide-react";
+import { useEffect, useState, useTransition } from "react";
+import { ScheduleItem } from "../types";
 
-interface ScheduleItem {
-    id: string;
-    date: string;
-    startTime: string;
-    endTime: string;
-    title: string;
-    details: string;
-    timestamp: Date;
-}
-
-// ダミーデータの作成
-const dummySchedules: ScheduleItem[] = [
-    {
-        id: "1",
-        date: "2025-04-18",
-        startTime: "09:00",
-        endTime: "10:30",
-        title: "プロジェクトミーティング",
-        details: "チームメンバー全員と進捗確認",
-        timestamp: new Date("2025-04-18T09:00:00"),
-    },
-    {
-        id: "2",
-        date: "2025-04-18",
-        startTime: "13:00",
-        endTime: "14:00",
-        title: "ランチミーティング",
-        details: "クライアントとの打ち合わせ",
-        timestamp: new Date("2025-04-18T13:00:00"),
-    },
-    {
-        id: "3",
-        date: "2025-04-19",
-        startTime: "11:00",
-        endTime: "12:00",
-        title: "デザインレビュー",
-        details: "UIデザインの最終確認",
-        timestamp: new Date("2025-04-19T11:00:00"),
-    },
-    {
-        id: "4",
-        date: "2025-04-20",
-        startTime: "15:00",
-        endTime: "16:30",
-        title: "週次振り返り",
-        details: "先週の成果と今週の計画",
-        timestamp: new Date("2025-04-20T15:00:00"),
-    },
-];
-
-const Schedule = ({ scheduleData }: { scheduleData: scheduleDataProps[] }) => {
+const Schedule = ({
+    scheduleData,
+    tripId,
+}: {
+    scheduleData: ScheduleItem[] | null;
+    tripId: number;
+}) => {
     const [schedules, setSchedules] = useState<ScheduleItem[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-
+    const [isPending, startTransition] = useTransition();
     useEffect(() => {
         // コンポーネントのマウント時にダミーデータを読み込む
         const loadDummyData = () => {
             setLoading(true);
             // 読み込みをシミュレート
             setTimeout(() => {
-                setSchedules(dummySchedules);
+                setSchedules(scheduleData || []);
                 setLoading(false);
             }, 500);
         };
@@ -77,7 +34,7 @@ const Schedule = ({ scheduleData }: { scheduleData: scheduleDataProps[] }) => {
 
     // スケジュールを日付ごとにグループ化
     const groupedSchedules = schedules.reduce((acc, schedule) => {
-        const date = format(schedule.timestamp, "yyyy年M月d日");
+        const date = format(schedule.date, "yyyy年M月d日");
         if (!acc[date]) {
             acc[date] = [];
         }
@@ -94,7 +51,12 @@ const Schedule = ({ scheduleData }: { scheduleData: scheduleDataProps[] }) => {
                         <h2 className="text-2xl font-bold mb-6">
                             新しい予定を追加
                         </h2>
-                        <form className="space-y-6">
+                        <form
+                            className="space-y-6"
+                            action={(formData) =>
+                                createSchedule(formData, tripId)
+                            }
+                        >
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
                                     日付
@@ -102,6 +64,7 @@ const Schedule = ({ scheduleData }: { scheduleData: scheduleDataProps[] }) => {
                                 </label>
                                 <Input
                                     type="date"
+                                    name="date"
                                     className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 />
                             </div>
@@ -114,6 +77,7 @@ const Schedule = ({ scheduleData }: { scheduleData: scheduleDataProps[] }) => {
                                     </label>
                                     <Input
                                         type="time"
+                                        name="startTime"
                                         className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                     />
                                 </div>
@@ -124,6 +88,7 @@ const Schedule = ({ scheduleData }: { scheduleData: scheduleDataProps[] }) => {
                                     </label>
                                     <Input
                                         type="time"
+                                        name="endTime"
                                         className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                     />
                                 </div>
@@ -135,6 +100,7 @@ const Schedule = ({ scheduleData }: { scheduleData: scheduleDataProps[] }) => {
                                 </label>
                                 <Input
                                     type="text"
+                                    name="title"
                                     className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                     placeholder="予定のタイトル"
                                 />
@@ -145,6 +111,7 @@ const Schedule = ({ scheduleData }: { scheduleData: scheduleDataProps[] }) => {
                                     詳細
                                 </label>
                                 <Textarea
+                                    name="description"
                                     className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                     placeholder="予定の詳細"
                                     rows={3}
@@ -187,32 +154,35 @@ const Schedule = ({ scheduleData }: { scheduleData: scheduleDataProps[] }) => {
                                             >
                                                 <div className="w-32">
                                                     <div className="font-medium text-gray-900">
-                                                        {schedule.startTime}
+                                                        {schedule.startTime.toLocaleTimeString()}
                                                     </div>
                                                     <div className="text-sm text-gray-500">
-                                                        {schedule.endTime}
+                                                        {schedule.endTime.toLocaleTimeString()}
                                                     </div>
                                                 </div>
                                                 <div className="flex-1">
                                                     <h3 className="font-medium text-gray-900">
                                                         {schedule.title}
                                                     </h3>
-                                                    {schedule.details && (
+                                                    {schedule.description && (
                                                         <p className="text-gray-600 mt-1 text-sm">
-                                                            {schedule.details}
+                                                            {
+                                                                schedule.description
+                                                            }
                                                         </p>
                                                     )}
                                                 </div>
                                                 <Button
-                                                    onClick={() =>
-                                                        setSchedules((prev) =>
-                                                            prev.filter(
-                                                                (_, i) =>
-                                                                    i !== index
-                                                            )
-                                                        )
-                                                    }
-                                                    className="text-gray"
+                                                    onClick={() => {
+                                                        startTransition(() => {
+                                                            deleteSchedule(
+                                                                schedule.id
+                                                            );
+                                                        });
+                                                    }}
+                                                    disabled={isPending}
+                                                    variant="delete"
+                                                    className="text-white"
                                                 >
                                                     <X className="w-5 h-5" />
                                                 </Button>
