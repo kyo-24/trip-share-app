@@ -5,12 +5,12 @@ import TripDetailForm from "@/model/trip/TripDetailForm";
 export default async function TripDetail({
     params,
 }: {
-    params: { id: number };
+    params: Promise<{ id: string }>;
 }) {
-    const tripId = Number(params.id);
-    const tripData = await getTripDetail(Number(params.id));
+    const { id } = await params;
+    const tripData = await getTripDetail(Number(id));
 
-    const scheduleData = await getSchedules({ tripId: tripId });
+    const scheduleData = await getSchedules({ tripId: Number(id) });
 
     if (!tripData) {
         return <div>旅行が見つかりませんでした。</div>;
