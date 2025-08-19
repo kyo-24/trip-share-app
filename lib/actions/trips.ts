@@ -46,7 +46,7 @@ export async function createTrip(formData: FormData) {
             throw new Error("User not found");
         }
 
-        const trip = await prisma.trip.create({
+        await prisma.trip.create({
             data: {
                 title: String(title),
                 destination: String(destination),

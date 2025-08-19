@@ -21,7 +21,7 @@ export async function createSchedule(formData: FormData, tripId: number) {
             throw new Error("Missing required fields");
         }
 
-        const schedule = await prisma.schedule.create({
+        await prisma.schedule.create({
             data: {
                 date: new Date(dateStr),
                 startTime: new Date(`${dateStr}T${startStr}`),
