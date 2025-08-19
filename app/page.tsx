@@ -5,6 +5,8 @@ import {
     CardFooter,
     CardHeader,
 } from "@/components/ui/card";
+import { syncUser } from "@/lib/actions/sync";
+import { getUserData } from "@/lib/auth";
 import { PlusCircle } from "lucide-react";
 import Link from "next/link";
 
@@ -32,7 +34,13 @@ const TripDummyData = [
     },
 ];
 
-export default function Home() {
+export default async function Home() {
+    const userResult = await getUserData();
+
+    // ユーザーが存在しない場合は同期を実行
+    if (!userResult.success) {
+        await syncUser();
+    }
     return (
         <div className="p-6">
             <div className="flex justify-between items-center px-4">
