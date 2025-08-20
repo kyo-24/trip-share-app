@@ -57,28 +57,28 @@ const TripDetailForm = ({
             <div className="container mx-auto px-6">
                 <div className="bg-white rounded-lg shadow-lg p-6">
                     <Tabs defaultValue="overview" className="w-full">
-                        <TabsList className="w-full bg-gray/10 p-0 h-auto">
+                        <TabsList className="w-full bg-gray/10 p-0 h-auto rounded-b-none">
                             <TabsTrigger
                                 value="overview"
-                                className="flex items-center gap-2 py-4"
+                                className="flex items-center gap-2 py-4 data-[state=active]:border-2 data-[state=active]:border-primary cursor-pointer"
                             >
                                 旅行概要
                             </TabsTrigger>
                             <TabsTrigger
                                 value="schedule"
-                                className="flex items-center gap-2 py-4"
+                                className="flex items-center gap-2 py-4 data-[state=active]:border-2 data-[state=active]:border-primary cursor-pointer"
                             >
                                 スケジュール
                             </TabsTrigger>
                             <TabsTrigger
                                 value="todo"
-                                className="flex items-center gap-2 py-4"
+                                className="flex items-center gap-2 py-4 data-[state=active]:border-2 data-[state=active]:border-primary cursor-pointer"
                             >
                                 TODOリスト
                             </TabsTrigger>
                             <TabsTrigger
                                 value="album"
-                                className="flex items-center gap-2 py-4"
+                                className="flex items-center gap-2 py-4 data-[state=active]:border-2 data-[state=active]:border-primary cursor-pointer"
                             >
                                 アルバム
                             </TabsTrigger>

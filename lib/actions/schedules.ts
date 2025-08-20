@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
+import { revalidatePath } from "next/cache";
 
 // スケジュール作成
 export async function createSchedule(formData: FormData, tripId: number) {
@@ -35,6 +36,7 @@ export async function createSchedule(formData: FormData, tripId: number) {
         console.error("Create schedule error:", error);
         throw new Error("Failed to create schedule");
     }
+    revalidatePath(`/trip/${tripId}`); // 旅行詳細ページを再検証
 }
 
 // プラン更新
@@ -83,10 +85,9 @@ export async function deleteSchedule(id: number) {
         await prisma.schedule.delete({
             where: { id },
         });
-
-        return { success: true };
     } catch (error) {
         console.error("Delete trip error:", error);
         return { success: false, error: "Failed to delete trip" };
     }
+    revalidatePath(`/trip/${id}`); // 旅行詳細ページを再検証
 }
