@@ -8,12 +8,22 @@ import Schedule from "./components/Schedule";
 import TodoList from "./components/TodoList";
 import { ScheduleItem, tripDataProps } from "./types";
 
+interface Todo {
+    id: number;
+    title: string;
+    description: string | null;
+    completed: boolean;
+    createdAt: Date;
+}
+
 const TripDetailForm = ({
     tripData,
     scheduleData,
+    todos,
 }: {
     tripData: tripDataProps;
     scheduleData: ScheduleItem[] | null;
+    todos: Todo[];
 }) => {
     return (
         <div className="min-h-screen bg-secondary">
@@ -89,7 +99,7 @@ const TripDetailForm = ({
                             scheduleData={scheduleData}
                             tripId={tripData.id}
                         />
-                        <TodoList />
+                        <TodoList todos={todos} tripId={tripData.id} />
                         <Album />
                     </Tabs>
                 </div>

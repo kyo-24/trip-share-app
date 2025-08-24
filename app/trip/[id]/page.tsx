@@ -15,6 +15,13 @@ export default async function TripDetail({
     if (!tripData) {
         return <div>旅行が見つかりませんでした。</div>;
     }
+    console.log("Trip Data:", tripData);
 
-    return <TripDetailForm tripData={tripData} scheduleData={scheduleData} />;
+    return (
+        <TripDetailForm
+            tripData={tripData}
+            scheduleData={scheduleData}
+            todos={tripData.todos}
+        />
+    );
 }

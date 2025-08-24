@@ -39,7 +39,7 @@ export async function createSchedule(formData: FormData, tripId: number) {
     revalidatePath(`/trip/${tripId}`); // 旅行詳細ページを再検証
 }
 
-// プラン更新
+// スケジュール更新
 export async function updateSchedule(
     id: number,
     data: {
@@ -56,10 +56,19 @@ export async function updateSchedule(
             throw new Error("Unauthorized");
         }
 
+        const schedule = await prisma.schedule.findUnique({
+            where: { id },
+        });
+
+        if (!schedule) {
+            throw new Error("Schedule not found");
+        }
+
         const updatedSchedule = await prisma.schedule.update({
             where: { id },
             data: {
                 ...data,
+                date: data.date ? new Date(data.date) : undefined,
                 startTime: data.startTime
                     ? new Date(data.startTime)
                     : undefined,
@@ -67,6 +76,7 @@ export async function updateSchedule(
             },
         });
 
+        revalidatePath(`/trip/${schedule.tripId}`); // 旅行詳細ページを再検証
         return { success: true, schedule: updatedSchedule };
     } catch (error) {
         console.error("Update schedule error:", error);
@@ -74,7 +84,7 @@ export async function updateSchedule(
     }
 }
 
-// プラン削除
+// スケジュール削除
 export async function deleteSchedule(id: number) {
     try {
         const { userId } = await auth();
@@ -82,12 +92,22 @@ export async function deleteSchedule(id: number) {
             throw new Error("Unauthorized");
         }
 
+        const schedule = await prisma.schedule.findUnique({
+            where: { id },
+        });
+
+        if (!schedule) {
+            throw new Error("Schedule not found");
+        }
+
         await prisma.schedule.delete({
             where: { id },
         });
+
+        revalidatePath(`/trip/${schedule.tripId}`); // 旅行詳細ページを再検証
+        return { success: true };
     } catch (error) {
-        console.error("Delete trip error:", error);
-        return { success: false, error: "Failed to delete trip" };
+        console.error("Delete schedule error:", error);
+        return { success: false, error: "Failed to delete schedule" };
     }
-    revalidatePath(`/trip/${id}`); // 旅行詳細ページを再検証
 }
