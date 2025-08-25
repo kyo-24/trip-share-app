@@ -149,3 +149,44 @@ export async function deleteTrip(id: number) {
         return { success: false, error: "Failed to delete trip" };
     }
 }
+
+// 旅行プラン検索処理
+export async function searchTripsAction(q: string, limit = 8) {
+    try {
+        const { userId } = await auth();
+        if (!userId) {
+            return [] as { id: number; title: string; createdAt: string }[];
+        }
+
+        const user = await prisma.user.findUnique({
+            where: { clerkId: userId },
+            select: { id: true },
+        });
+
+        if (!user) {
+            return [] as { id: number; title: string; createdAt: string }[];
+        }
+
+        const trips = await prisma.trip.findMany({
+            where: {
+                title: { contains: q },
+                OR: [
+                    { ownerId: user.id },
+                    { members: { some: { userId: user.id } } },
+                ],
+            },
+            orderBy: { createdAt: "desc" },
+            take: Math.min(Math.max(limit, 1), 20),
+            select: { id: true, title: true, createdAt: true },
+        });
+
+        return trips.map((t) => ({
+            id: t.id,
+            title: t.title,
+            createdAt: t.createdAt.toISOString(),
+        }));
+    } catch (error) {
+        console.error("Search trips action error:", error);
+        return [] as { id: number; title: string; createdAt: string }[];
+    }
+}
