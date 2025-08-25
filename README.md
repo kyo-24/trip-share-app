@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Trip Share
 
-## Getting Started
+## 📌 アプリ概要
+**Trip Share** は、友人や家族、恋人と旅行のスケジュールや思い出を簡単に共有できるアプリです。  
+旅行計画の作成から当日のスケジュール管理、思い出の写真共有までを一つのアプリで完結できます。  
 
-First, run the development server:
+### 解決したい課題
+- 旅行計画がLINEやスプレッドシートに散らばってしまい管理が大変  
+- 誰が何を持ってくるのか、どの予定が最新なのか分かりにくい  
+- 撮った写真を後でまとめるのが面倒  
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+これらを **「一元管理 + 共同編集 + 共有」** で解決します。
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🚀 機能一覧
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### ✅ 実装済み（MVP）
+- ユーザー登録・ログイン（Clerk認証）
+- 旅行プランの作成・編集・削除  
+  - タイトル、日程、目的地を設定  
+- プラン毎のスケジュールの登録・編集・削除  
+  - 日付ごとのイベント追加  
+- プラン毎のTODOリスト登録・編集・削除  
 
-## Learn More
+### 🛠 今後の実装予定
+- レスポンシブ対応
+- メンバー招待・共同編集機能  
+- 写真アップロード・アルバム共有  
+- 通知機能  
+- 地図連携（Google Maps API など）  
+- 予算管理・費用分担機能  
+- カレンダー表示 / ダークモード対応  
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🛠 技術スタック
+- **フロントエンド**: Next.js (React 19) + TypeScript  
+- **UI**: Tailwind CSS + Shadcn UI  
+- **バックエンド**: Supabase + Prisma  
+- **認証**: Clerk  
+- **その他**: Server Actions, リアルタイムデータ同期  
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 📖 使い方
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### ユーザー向け
+1. 新規登録またはログイン  
+2. 「旅行プランを作成」からタイトル・日程・目的地を入力  
+3. スケジュールやTODOリストを追加  
+4. 旅行当日はアプリを見ながら行動 & 写真共有  
+5. 旅行後はアルバムや思い出を振り返り  
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
