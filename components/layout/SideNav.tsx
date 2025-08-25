@@ -35,10 +35,20 @@ export function SideNav() {
     return (
         <div
             className={cn(
-                "flex flex-col bg-white border-r border-border transition-all duration-500 w-64 pt-16 shadow-lg"
+                "flex flex-col bg-white border-r border-border transition-all duration-500 w-64 pt-3 shadow-lg"
             )}
         >
-            <nav className="flex-1 px-4 py-4 space-y-1">
+            <Link href={"/"}>
+                <div className="flex flex-col items-center mr-8 cursor-pointer">
+                    <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-500 to-blue-600 bg-clip-text text-transparent">
+                        Trip Share
+                    </h1>
+                    <p className="text-xs hidden md:block">
+                        思い出の旅を、みんなで
+                    </p>
+                </div>
+            </Link>
+            <nav className="flex-1 px-4 py-10 space-y-1">
                 {navigation.map((item) => {
                     // const isActive = pathname === item.href;
                     return (
@@ -46,7 +56,7 @@ export function SideNav() {
                             key={item.name}
                             href={item.href}
                             className={cn(
-                                "flex items-center gap-3 px-3 py-3 text-sm rounded-md transition-colors hover:bg-primary/10"
+                                "flex items-center gap-3 pl-8 py-3 text-sm rounded-md transition-colors hover:bg-primary/10"
                                 // isActive
                                 //   ? "bg-blue-500 text-primary-foreground"
                                 //   : "text-muted-foreground hover:bg-muted"
@@ -55,7 +65,7 @@ export function SideNav() {
                             <item.icon className="h-5 w-5 shrink-0 text-primary" />
                             <span
                                 className={cn(
-                                    "transition-opacity duration-300 text-gray-600 font-bold"
+                                    "transition-opacity duration-300 text-gray-600 font-bold pl-1"
                                 )}
                             >
                                 {item.name}

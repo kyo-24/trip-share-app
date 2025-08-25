@@ -76,7 +76,7 @@ export async function updateTrip(
         description?: string;
         startDate?: string;
         endDate?: string;
-        coverImageUrl?: string;
+        coverImageUrl?: string | undefined;
     }
 ) {
     try {
@@ -99,7 +99,7 @@ export async function updateTrip(
             throw new Error("Forbidden");
         }
 
-        const updatedTrip = await prisma.trip.update({
+        await prisma.trip.update({
             where: { id },
             data: {
                 ...data,
@@ -109,12 +109,12 @@ export async function updateTrip(
                 endDate: data.endDate ? new Date(data.endDate) : undefined,
             },
         });
-
-        return { success: true, trip: updatedTrip };
     } catch (error) {
         console.error("Update trip error:", error);
         return { success: false, error: "Failed to update trip" };
     }
+    revalidatePath(`/trip/${id}`);
+    redirect(`/trip/${id}`);
 }
 
 // プラン削除

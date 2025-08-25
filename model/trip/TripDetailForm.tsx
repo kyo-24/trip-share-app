@@ -70,25 +70,25 @@ const TripDetailForm = ({
                         <TabsList className="w-full bg-gray/10 p-0 h-auto rounded-b-none">
                             <TabsTrigger
                                 value="overview"
-                                className="flex items-center gap-2 py-4 data-[state=active]:border-2 data-[state=active]:border-primary cursor-pointer"
+                                className="flex items-center gap-2 py-4 data-[state=active]:border-2 data-[state=active]:border-primary cursor-pointer hover:bg-gray/10"
                             >
                                 旅行概要
                             </TabsTrigger>
                             <TabsTrigger
                                 value="schedule"
-                                className="flex items-center gap-2 py-4 data-[state=active]:border-2 data-[state=active]:border-primary cursor-pointer"
+                                className="flex items-center gap-2 py-4 data-[state=active]:border-2 data-[state=active]:border-primary cursor-pointer hover:bg-gray/10"
                             >
                                 スケジュール
                             </TabsTrigger>
                             <TabsTrigger
                                 value="todo"
-                                className="flex items-center gap-2 py-4 data-[state=active]:border-2 data-[state=active]:border-primary cursor-pointer"
+                                className="flex items-center gap-2 py-4 data-[state=active]:border-2 data-[state=active]:border-primary cursor-pointer hover:bg-gray/10"
                             >
                                 TODOリスト
                             </TabsTrigger>
                             <TabsTrigger
                                 value="album"
-                                className="flex items-center gap-2 py-4 data-[state=active]:border-2 data-[state=active]:border-primary cursor-pointer"
+                                className="flex items-center gap-2 py-4 data-[state=active]:border-2 data-[state=active]:border-primary cursor-pointer hover:bg-gray/10"
                             >
                                 アルバム
                             </TabsTrigger>

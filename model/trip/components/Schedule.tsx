@@ -55,6 +55,27 @@ const Schedule = ({
         return format(date, "yyyy-MM-dd");
     };
 
+    const handleSubmit = async (formData: FormData) => {
+        if (editingSchedule) {
+            // 編集の場合
+            const dateStr = formData.get("date") as string;
+            const startStr = formData.get("startTime") as string;
+            const endStr = formData.get("endTime") as string;
+
+            await updateSchedule(editingSchedule.id, {
+                date: dateStr,
+                startTime: `${dateStr}T${startStr}`,
+                endTime: `${dateStr}T${endStr}`,
+                title: formData.get("title") as string,
+                description: formData.get("description") as string,
+            });
+        } else {
+            // 新規作成の場合
+            await createSchedule(formData, tripId);
+        }
+        handleCloseModal();
+    };
+
     return (
         <TabsContent value="schedule" className="mt-6">
             <div className="min-h-screen p-6">
@@ -80,35 +101,7 @@ const Schedule = ({
                     isOpen={isOpenModal}
                     onOpenChange={setIsOpenModal}
                 >
-                    <form
-                        className="space-y-6"
-                        action={async (formData) => {
-                            if (editingSchedule) {
-                                // 編集の場合
-                                const dateStr = formData.get("date") as string;
-                                const startStr = formData.get(
-                                    "startTime"
-                                ) as string;
-                                const endStr = formData.get(
-                                    "endTime"
-                                ) as string;
-
-                                await updateSchedule(editingSchedule.id, {
-                                    date: dateStr,
-                                    startTime: `${dateStr}T${startStr}`,
-                                    endTime: `${dateStr}T${endStr}`,
-                                    title: formData.get("title") as string,
-                                    description: formData.get(
-                                        "description"
-                                    ) as string,
-                                });
-                            } else {
-                                // 新規作成の場合
-                                await createSchedule(formData, tripId);
-                            }
-                            handleCloseModal();
-                        }}
-                    >
+                    <form className="space-y-6" action={handleSubmit}>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                 日付
@@ -237,7 +230,7 @@ const Schedule = ({
                                         <h3 className="text-xl font-bold mb-4 text-gray-800">
                                             {date}
                                         </h3>
-                                        <div className="space-y-4">
+                                        <div className="space-y-4 border-l-4 border-primary pl-2">
                                             {items.map((schedule, index) => (
                                                 <div
                                                     key={index}
