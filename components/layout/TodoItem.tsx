@@ -133,16 +133,20 @@ const TodoItem: React.FC<TodoItemProps> = ({ task }) => {
                             <Button
                                 onClick={() => setIsEditing(true)}
                                 disabled={isPending}
-                                className="p-1.5 text-blue-600 hover:bg-blue-50 rounded transition-colors duration-200"
                                 title="編集"
+                                variant="outline"
+                                size="sm"
+                                className="text-blue-600 hover:bg-blue-50"
                             >
                                 <Edit3 size={16} />
                             </Button>
                             <Button
                                 onClick={handleDeleteTask}
                                 disabled={isPending}
-                                className="p-1.5 text-red-600 hover:bg-red-50 rounded transition-colors duration-200"
                                 title="削除"
+                                variant="delete"
+                                size="sm"
+                                className="text-white"
                             >
                                 <Trash2 size={16} />
                             </Button>

@@ -22,7 +22,6 @@ export default async function Home() {
     // プラン一覧を取得
     const trips = await getTrips();
 
-    console.log(trips);
     return (
         <div className="p-6">
             <div className="flex justify-between items-center px-4">

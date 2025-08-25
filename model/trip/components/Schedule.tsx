@@ -10,7 +10,7 @@ import {
     updateSchedule,
 } from "@/lib/actions/schedules";
 import { format } from "date-fns";
-import { Calendar, Clock, Edit, Plus, X } from "lucide-react";
+import { Calendar, Clock, Edit3, Plus, Trash2 } from "lucide-react";
 import { useState, useTransition } from "react";
 import { ScheduleItem } from "../types";
 
@@ -286,7 +286,7 @@ const Schedule = ({
                                                             size="sm"
                                                             className="text-blue-600 hover:bg-blue-50"
                                                         >
-                                                            <Edit className="w-4 h-4" />
+                                                            <Edit3 size={16} />
                                                         </Button>
                                                         <Button
                                                             onClick={() => {
@@ -303,7 +303,7 @@ const Schedule = ({
                                                             size="sm"
                                                             className="text-white"
                                                         >
-                                                            <X className="w-4 h-4" />
+                                                            <Trash2 size={16} />
                                                         </Button>
                                                     </div>
                                                 </div>

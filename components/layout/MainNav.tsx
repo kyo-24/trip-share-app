@@ -27,13 +27,16 @@ export function MainNav() {
                     </div>
                 </Link>
                 <div className="flex-1">
-                    <div className="relative max-w-md ml-auto">
+                    <div className="relative max-w-md ml-auto flex items-center gap-1">
                         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                         <Input
                             type="search"
                             placeholder="旅行プランを検索..."
                             className="pl-8 bg-white"
                         />
+                        <Button className="bg-gradient-to-r from-blue-600 to-cyan-500">
+                            検索
+                        </Button>
                     </div>
                 </div>
                 <div className="flex items-center gap-2">

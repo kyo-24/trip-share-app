@@ -41,7 +41,7 @@ const TripDetailForm = ({
                             <div className="flex items-center gap-4">
                                 <div className="flex items-center">
                                     <MapPin className="w-4 h-4 mr-1" />
-                                    旅行先
+                                    {tripData.destination}
                                 </div>
                                 <div className="flex items-center">
                                     <Clock className="w-4 h-4 mr-1" />
