@@ -78,6 +78,7 @@ const Schedule = ({
                     }
                     title={editingSchedule ? "予定を編集" : "新しい予定を追加"}
                     isOpen={isOpenModal}
+                    onOpenChange={setIsOpenModal}
                 >
                     <form
                         className="space-y-6"

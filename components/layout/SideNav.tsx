@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { SignOutButton } from "@clerk/nextjs";
 import {
     Calendar,
     Home,
@@ -11,6 +12,9 @@ import {
     Users,
 } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
+import { Modal } from "../common/Modal";
+import { Button } from "../ui/button";
 // import { usePathname } from "next/navigation";
 
 const navigation = [
@@ -21,14 +25,13 @@ const navigation = [
     { name: "スポット", href: "/spots", icon: Map },
 ];
 
-const bottomNavigation = [
-    { name: "設定", href: "/settings", icon: Settings },
-    { name: "ログアウト", href: "/logout", icon: LogOut },
-];
+// const bottomNavigation = [
+//     { name: "設定", href: "/settings", icon: Settings },
+//     { name: "サインアウト", href: "/logout", icon: LogOut },
+// ];
 
 export function SideNav() {
-    // const pathname = usePathname();
-
+    const [isOpenModal, setIsOpenModal] = useState(false);
     return (
         <div
             className={cn(
@@ -63,22 +66,59 @@ export function SideNav() {
             </nav>
             <div className="p-4 border-t border-gray-300">
                 <nav className="space-y-1">
-                    {bottomNavigation.map((item) => (
-                        <Link
-                            key={item.name}
-                            href={item.href}
-                            className="flex items-center gap-3 px-3 py-3 text-sm text-muted-foreground rounded-md hover:bg-muted transition-colors hover:bg-primary/10"
+                    <Link
+                        href={"/settings"}
+                        className="flex items-center gap-3 px-3 py-3 text-sm text-muted-foreground rounded-md hover:bg-muted transition-colors hover:bg-primary/10"
+                    >
+                        <Settings className="h-5 w-5 shrink-0 text-primary" />
+                        <h2
+                            className={cn(
+                                "transition-opacity duration-300 font-bold"
+                            )}
                         >
-                            <item.icon className="h-5 w-5 shrink-0 text-primary" />
-                            <h2
-                                className={cn(
-                                    "transition-opacity duration-300 font-bold"
-                                )}
+                            設定
+                        </h2>
+                    </Link>
+                    <Modal
+                        title="サインアウト"
+                        isOpen={isOpenModal}
+                        trigger={
+                            <div
+                                className="flex items-center gap-3 px-3 py-3 text-sm text-muted-foreground rounded-md hover:bg-muted transition-colors hover:bg-primary/10 cursor-pointer"
+                                onClick={() => setIsOpenModal(true)}
                             >
-                                {item.name}
-                            </h2>
-                        </Link>
-                    ))}
+                                <LogOut className="h-5 w-5 shrink-0 text-primary" />
+                                <h2
+                                    className={cn(
+                                        "transition-opacity duration-300 font-bold"
+                                    )}
+                                >
+                                    サインアウト
+                                </h2>
+                            </div>
+                        }
+                        onOpenChange={setIsOpenModal}
+                    >
+                        <div>
+                            <p className="mb-4">本当にサインアウトしますか？</p>
+                            <div className="flex justify-end space-x-3">
+                                <Button
+                                    variant={"secondary"}
+                                    className="bg-gray-100 hover:bg-gray-200"
+                                    onClick={() => {
+                                        setIsOpenModal(false);
+                                    }}
+                                >
+                                    キャンセル
+                                </Button>
+                                <SignOutButton>
+                                    <Button className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors cursor-pointer">
+                                        サインアウト
+                                    </Button>
+                                </SignOutButton>
+                            </div>
+                        </div>
+                    </Modal>
                 </nav>
             </div>
         </div>

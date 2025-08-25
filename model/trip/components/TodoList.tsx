@@ -50,6 +50,7 @@ const TodoList = ({ todos, tripId }: TodoListProps) => {
                     }
                     title="新しいタスクを追加"
                     isOpen={isOpenModal}
+                    onOpenChange={setIsOpenModal}
                 >
                     <form
                         className="space-y-6"
