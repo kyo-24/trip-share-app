@@ -10,23 +10,40 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
-import { createTrip } from "@/lib/actions/trips";
-import {
-    CalendarIcon,
-    ChevronLeft,
-    ImageIcon,
-    Plus,
-    Upload,
-} from "lucide-react";
+import { updateTrip } from "@/lib/actions/trips";
+import { CalendarIcon, ImageIcon, Plus, Upload } from "lucide-react";
 import Link from "next/link";
 import React, { useRef } from "react";
+import { tripDataProps } from "./types";
 
-const TripCreateForm = () => {
+const TripEditForm = ({ tripData }: { tripData: tripDataProps }) => {
     const [startDate, setStartDate] = React.useState<Date | undefined>(
-        new Date()
+        new Date(tripData.startDate)
     );
-    const [endDate, setEndDate] = React.useState<Date | undefined>(new Date());
+    const [endDate, setEndDate] = React.useState<Date | undefined>(
+        new Date(tripData.endDate)
+    );
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleSubmit = async (formData: FormData) => {
+        const cover = formData.get("coverImageUrl");
+        const coverImageUrl =
+            typeof cover === "string" && cover.trim().length > 0
+                ? cover
+                : undefined;
+        const data = {
+            title: formData.get("title") as string,
+            destination: formData.get("destination") as string,
+            budget: formData.get("budget")
+                ? Number(formData.get("budget"))
+                : undefined,
+            description: formData.get("description") as string,
+            startDate: formData.get("startDate") as string,
+            endDate: formData.get("endDate") as string,
+            coverImageUrl: coverImageUrl,
+        };
+        await updateTrip(tripData.id, data);
+    };
 
     const selectFile = () => {
         fileInputRef?.current?.click();
@@ -41,23 +58,19 @@ const TripCreateForm = () => {
 
     return (
         <div className="container max-w-4xl py-10 px-4 mx-auto relative">
-            <div className="flex items-center mb-6">
-                <Link href="/" className="mr-4">
-                    <Button variant="ghost" size="icon">
-                        <ChevronLeft className="h-5 w-5" />
-                    </Button>
-                </Link>
-                <h1 className="text-2xl font-bold">新しい旅行プランを作成</h1>
+            <div className="mb-6">
+                <h1 className="text-2xl font-bold">旅行プランを編集</h1>
             </div>
 
-            <form className="space-y-8" action={createTrip}>
+            <form className="space-y-8" action={handleSubmit}>
                 <div className="space-y-6">
                     <div>
                         <Subtitle title="旅行タイトル" />
                         <Input
                             id="title"
                             name="title"
-                            placeholder="例: 家族で行く京都旅行"
+                            defaultValue={tripData.title}
+                            placeholder="例: 夏の京都旅行"
                             className="mt-1.5"
                             required
                         />
@@ -127,6 +140,7 @@ const TripCreateForm = () => {
                             name="destination"
                             placeholder="例: 京都"
                             className="mt-1.5"
+                            defaultValue={tripData.destination}
                             required
                         />
                     </div>
@@ -158,7 +172,6 @@ const TripCreateForm = () => {
                                         mode="single"
                                         selected={startDate}
                                         onSelect={setStartDate}
-                                        initialFocus
                                     />
                                 </PopoverContent>
                             </Popover>
@@ -211,6 +224,7 @@ const TripCreateForm = () => {
                             name="budget"
                             type="number"
                             placeholder="例: 100000"
+                            defaultValue={tripData.budget || ""}
                             className="mt-1.5"
                         />
                     </div>
@@ -226,26 +240,6 @@ const TripCreateForm = () => {
                                 <Plus className="h-4 w-4 text-white" />
                             </Button>
                         </div>
-
-                        {/* {members.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-3">
-                    {members.map((member, index) => (
-                        <div
-                        key={index}
-                        className="flex items-center gap-1 bg-secondary text-secondary-foreground px-3 py-1 rounded-full text-sm"
-                        >
-                        {member}
-                        <button
-                            type="button"
-                            onClick={() => handleRemoveMember(index)}
-                            className="ml-1 text-secondary-foreground/70 hover:text-secondary-foreground"
-                        >
-                            <X className="h-3 w-3" />
-                        </button>
-                        </div>
-                    ))}
-                    </div>
-                )} */}
                     </div>
 
                     <div>
@@ -254,6 +248,7 @@ const TripCreateForm = () => {
                             id="notes"
                             name="description"
                             placeholder="旅行に関する備考や注意点など"
+                            defaultValue={tripData.description || ""}
                             rows={4}
                             className="mt-1.5"
                         />
@@ -261,14 +256,11 @@ const TripCreateForm = () => {
                 </div>
 
                 <div className="pt-4 border-t">
-                    <p className="text-sm text-muted-foreground mb-6">
-                        旅行プランを作成すると、後からスケジュール、Todo、写真を追加できます。
-                    </p>
                     <div className="flex justify-end gap-4">
-                        <Link href="/">
+                        <Link href={`/trip/${tripData.id}`}>
                             <Button variant="outline">キャンセル</Button>
                         </Link>
-                        <Button type="submit">作成する</Button>
+                        <Button type="submit">編集する</Button>
                     </div>
                 </div>
             </form>
@@ -276,4 +268,4 @@ const TripCreateForm = () => {
     );
 };
 
-export default TripCreateForm;
+export default TripEditForm;

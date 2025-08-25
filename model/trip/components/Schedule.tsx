@@ -1,83 +1,35 @@
-import { TabsContent } from "@/components/ui/tabs";
-import { Calendar, Clock, Plus, X } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import { scheduleDataProps } from "../types";
-import { format } from "date-fns";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Modal } from "@/components/common/Modal";
 import { Button } from "@/components/ui/button";
+import { DialogClose } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { TabsContent } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import {
+    createSchedule,
+    deleteSchedule,
+    updateSchedule,
+} from "@/lib/actions/schedules";
+import { format } from "date-fns";
+import { Calendar, Clock, Edit3, Plus, Trash2 } from "lucide-react";
+import { useState, useTransition } from "react";
+import { ScheduleItem } from "../types";
 
-interface ScheduleItem {
-    id: string;
-    date: string;
-    startTime: string;
-    endTime: string;
-    title: string;
-    details: string;
-    timestamp: Date;
-}
-
-// ダミーデータの作成
-const dummySchedules: ScheduleItem[] = [
-    {
-        id: "1",
-        date: "2025-04-18",
-        startTime: "09:00",
-        endTime: "10:30",
-        title: "プロジェクトミーティング",
-        details: "チームメンバー全員と進捗確認",
-        timestamp: new Date("2025-04-18T09:00:00"),
-    },
-    {
-        id: "2",
-        date: "2025-04-18",
-        startTime: "13:00",
-        endTime: "14:00",
-        title: "ランチミーティング",
-        details: "クライアントとの打ち合わせ",
-        timestamp: new Date("2025-04-18T13:00:00"),
-    },
-    {
-        id: "3",
-        date: "2025-04-19",
-        startTime: "11:00",
-        endTime: "12:00",
-        title: "デザインレビュー",
-        details: "UIデザインの最終確認",
-        timestamp: new Date("2025-04-19T11:00:00"),
-    },
-    {
-        id: "4",
-        date: "2025-04-20",
-        startTime: "15:00",
-        endTime: "16:30",
-        title: "週次振り返り",
-        details: "先週の成果と今週の計画",
-        timestamp: new Date("2025-04-20T15:00:00"),
-    },
-];
-
-const Schedule = ({ scheduleData }: { scheduleData: scheduleDataProps[] }) => {
-    const [schedules, setSchedules] = useState<ScheduleItem[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-
-    useEffect(() => {
-        // コンポーネントのマウント時にダミーデータを読み込む
-        const loadDummyData = () => {
-            setLoading(true);
-            // 読み込みをシミュレート
-            setTimeout(() => {
-                setSchedules(dummySchedules);
-                setLoading(false);
-            }, 500);
-        };
-
-        loadDummyData();
-    }, []);
+const Schedule = ({
+    scheduleData,
+    tripId,
+}: {
+    scheduleData: ScheduleItem[] | null;
+    tripId: number;
+}) => {
+    const [isPending, startTransition] = useTransition();
+    const [isOpenModal, setIsOpenModal] = useState(false);
+    const [editingSchedule, setEditingSchedule] = useState<ScheduleItem | null>(
+        null
+    );
 
     // スケジュールを日付ごとにグループ化
-    const groupedSchedules = schedules.reduce((acc, schedule) => {
-        const date = format(schedule.timestamp, "yyyy年M月d日");
+    const groupedSchedules = scheduleData?.reduce((acc, schedule) => {
+        const date = format(schedule.date, "yyyy年M月d日");
         if (!acc[date]) {
             acc[date] = [];
         }
@@ -85,148 +37,281 @@ const Schedule = ({ scheduleData }: { scheduleData: scheduleDataProps[] }) => {
         return acc;
     }, {} as Record<string, ScheduleItem[]>);
 
+    const handleEditSchedule = (schedule: ScheduleItem) => {
+        setEditingSchedule(schedule);
+        setIsOpenModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsOpenModal(false);
+        setEditingSchedule(null);
+    };
+
+    const formatTimeForInput = (date: Date) => {
+        return format(date, "HH:mm");
+    };
+
+    const formatDateForInput = (date: Date) => {
+        return format(date, "yyyy-MM-dd");
+    };
+
+    const handleSubmit = async (formData: FormData) => {
+        if (editingSchedule) {
+            // 編集の場合
+            const dateStr = formData.get("date") as string;
+            const startStr = formData.get("startTime") as string;
+            const endStr = formData.get("endTime") as string;
+
+            await updateSchedule(editingSchedule.id, {
+                date: dateStr,
+                startTime: `${dateStr}T${startStr}`,
+                endTime: `${dateStr}T${endStr}`,
+                title: formData.get("title") as string,
+                description: formData.get("description") as string,
+            });
+        } else {
+            // 新規作成の場合
+            await createSchedule(formData, tripId);
+        }
+        handleCloseModal();
+    };
+
     return (
         <TabsContent value="schedule" className="mt-6">
             <div className="min-h-screen p-6">
-                <div className="max-w-3xl mx-auto">
-                    {/* フォーム部分 */}
-                    <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
-                        <h2 className="text-2xl font-bold mb-6">
-                            新しい予定を追加
-                        </h2>
-                        <form className="space-y-6">
+                {/* フォーム部分 */}
+                <Modal
+                    trigger={
+                        <div className="flex justify-between items-center mb-10">
+                            <h2 className="text-xl font-semibold">
+                                スケージュール管理
+                            </h2>
+                            <Button
+                                variant={"default"}
+                                size={"lg"}
+                                className="flex items-center"
+                                onClick={() => setIsOpenModal(true)}
+                            >
+                                <Plus className="w-4 h-4 mr-1" />
+                                予定を追加
+                            </Button>
+                        </div>
+                    }
+                    title={editingSchedule ? "予定を編集" : "新しい予定を追加"}
+                    isOpen={isOpenModal}
+                    onOpenChange={setIsOpenModal}
+                >
+                    <form className="space-y-6" action={handleSubmit}>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                日付
+                                <Calendar className="inline-block w-4 h-4 ml-1" />
+                            </label>
+                            <Input
+                                type="date"
+                                name="date"
+                                defaultValue={
+                                    editingSchedule
+                                        ? formatDateForInput(
+                                              editingSchedule.date
+                                          )
+                                        : ""
+                                }
+                                className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                required
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    日付
-                                    <Calendar className="inline-block w-4 h-4 ml-1" />
+                                    開始時間
+                                    <Clock className="inline-block w-4 h-4 ml-1" />
                                 </label>
                                 <Input
-                                    type="date"
+                                    type="time"
+                                    name="startTime"
+                                    defaultValue={
+                                        editingSchedule
+                                            ? formatTimeForInput(
+                                                  editingSchedule.startTime
+                                              )
+                                            : ""
+                                    }
                                     className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    required
                                 />
                             </div>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        開始時間
-                                        <Clock className="inline-block w-4 h-4 ml-1" />
-                                    </label>
-                                    <Input
-                                        type="time"
-                                        className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        終了時間
-                                        <Clock className="inline-block w-4 h-4 ml-1" />
-                                    </label>
-                                    <Input
-                                        type="time"
-                                        className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                    />
-                                </div>
-                            </div>
-
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    タイトル
+                                    終了時間
+                                    <Clock className="inline-block w-4 h-4 ml-1" />
                                 </label>
                                 <Input
-                                    type="text"
+                                    type="time"
+                                    name="endTime"
+                                    defaultValue={
+                                        editingSchedule
+                                            ? formatTimeForInput(
+                                                  editingSchedule.endTime
+                                              )
+                                            : ""
+                                    }
                                     className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                    placeholder="予定のタイトル"
+                                    required
                                 />
                             </div>
+                        </div>
 
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    詳細
-                                </label>
-                                <Textarea
-                                    className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                    placeholder="予定の詳細"
-                                    rows={3}
-                                />
-                            </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                タイトル
+                            </label>
+                            <Input
+                                type="text"
+                                name="title"
+                                defaultValue={
+                                    editingSchedule ? editingSchedule.title : ""
+                                }
+                                className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="予定のタイトル"
+                                required
+                            />
+                        </div>
 
-                            <div className="flex justify-end space-x-3">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                詳細
+                            </label>
+                            <Textarea
+                                name="description"
+                                defaultValue={
+                                    editingSchedule
+                                        ? editingSchedule.description
+                                        : ""
+                                }
+                                className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="予定の詳細"
+                                rows={3}
+                                required
+                            />
+                        </div>
+
+                        <div className="flex justify-end space-x-3">
+                            <DialogClose asChild>
                                 <Button
                                     type="button"
+                                    onClick={handleCloseModal}
                                     className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
                                 >
                                     キャンセル
                                 </Button>
-                                <Button
-                                    type="submit"
-                                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                                >
-                                    保存
-                                </Button>
-                            </div>
-                        </form>
-                    </div>
+                            </DialogClose>
+                            <Button
+                                type="submit"
+                                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                            >
+                                {editingSchedule ? "更新" : "保存"}
+                            </Button>
+                        </div>
+                    </form>
+                </Modal>
 
-                    {/* スケジュール表示部分 */}
+                {/* スケジュール表示部分 */}
+                <div className="max-w-3xl mx-auto">
                     <div className="space-y-6">
-                        {Object.entries(groupedSchedules).map(
-                            ([date, items]) => (
-                                <div
-                                    key={date}
-                                    className="bg-white rounded-xl shadow-lg p-6"
-                                >
-                                    <h3 className="text-xl font-bold mb-4 text-gray-800">
-                                        {date}
-                                    </h3>
-                                    <div className="space-y-4">
-                                        {items.map((schedule, index) => (
-                                            <div
-                                                key={index}
-                                                className="flex items-start space-x-4 p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                                            >
-                                                <div className="w-32">
-                                                    <div className="font-medium text-gray-900">
-                                                        {schedule.startTime}
-                                                    </div>
-                                                    <div className="text-sm text-gray-500">
-                                                        {schedule.endTime}
-                                                    </div>
-                                                </div>
-                                                <div className="flex-1">
-                                                    <h3 className="font-medium text-gray-900">
-                                                        {schedule.title}
-                                                    </h3>
-                                                    {schedule.details && (
-                                                        <p className="text-gray-600 mt-1 text-sm">
-                                                            {schedule.details}
-                                                        </p>
-                                                    )}
-                                                </div>
-                                                <Button
-                                                    onClick={() =>
-                                                        setSchedules((prev) =>
-                                                            prev.filter(
-                                                                (_, i) =>
-                                                                    i !== index
-                                                            )
-                                                        )
-                                                    }
-                                                    className="text-gray"
+                        {groupedSchedules &&
+                            Object.entries(groupedSchedules).map(
+                                ([date, items]) => (
+                                    <div
+                                        key={date}
+                                        className="bg-primary/5 rounded-xl shadow-lg p-6"
+                                    >
+                                        <h3 className="text-xl font-bold mb-4 text-gray-800">
+                                            {date}
+                                        </h3>
+                                        <div className="space-y-4 border-l-4 border-primary pl-2">
+                                            {items.map((schedule, index) => (
+                                                <div
+                                                    key={index}
+                                                    className="flex items-start space-x-4 p-3 rounded-lg"
                                                 >
-                                                    <X className="w-5 h-5" />
-                                                </Button>
-                                            </div>
-                                        ))}
+                                                    <div className="w-32">
+                                                        <div className="font-medium text-gray-900">
+                                                            {schedule.startTime.toLocaleTimeString(
+                                                                "ja-JP",
+                                                                {
+                                                                    hour: "2-digit",
+                                                                    minute: "2-digit",
+                                                                }
+                                                            )}
+                                                        </div>
+                                                        <div className="text-sm text-gray-500">
+                                                            {schedule.endTime.toLocaleTimeString(
+                                                                "ja-JP",
+                                                                {
+                                                                    hour: "2-digit",
+                                                                    minute: "2-digit",
+                                                                }
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <h3 className="font-medium text-gray-900">
+                                                            {schedule.title}
+                                                        </h3>
+                                                        {schedule.description && (
+                                                            <p className="text-gray-600 mt-1 text-sm">
+                                                                {
+                                                                    schedule.description
+                                                                }
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <Button
+                                                            onClick={() =>
+                                                                handleEditSchedule(
+                                                                    schedule
+                                                                )
+                                                            }
+                                                            disabled={isPending}
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="text-blue-600 hover:bg-blue-50"
+                                                        >
+                                                            <Edit3 size={16} />
+                                                        </Button>
+                                                        <Button
+                                                            onClick={() => {
+                                                                startTransition(
+                                                                    () => {
+                                                                        deleteSchedule(
+                                                                            schedule.id
+                                                                        );
+                                                                    }
+                                                                );
+                                                            }}
+                                                            disabled={isPending}
+                                                            variant="delete"
+                                                            size="sm"
+                                                            className="text-white"
+                                                        >
+                                                            <Trash2 size={16} />
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
-                                </div>
-                            )
-                        )}
+                                )
+                            )}
 
-                        {Object.keys(groupedSchedules).length === 0 && (
-                            <div className="bg-white rounded-xl shadow-lg p-8 text-center">
+                        {(!groupedSchedules ||
+                            Object.keys(groupedSchedules).length === 0) && (
+                            <div className="text-center">
                                 <p className="text-gray">
-                                    予定が登録されていません
+                                    ※予定が登録されていません
                                 </p>
                             </div>
                         )}

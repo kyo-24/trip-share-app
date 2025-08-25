@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../lib/generated/prisma"
@@ -17,7 +14,75 @@ datasource db {
 
 model User {
   id    Int     @id @default(autoincrement())
+  clerkId String @unique
   email String  @unique
   name  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // リレーション
+  ownedTrips Trip[]      // 作成したプラン
+  tripMembers TripMember[] // 参加しているプラン
 }
 
+model Trip {
+  id Int @id @default(autoincrement())
+  title String
+  destination String
+  budget Int
+  description String?
+  startDate DateTime
+  endDate DateTime
+  coverImageUrl String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // リレーション
+  ownerId Int
+  owner User @relation(fields: [ownerId], references: [id])
+  members TripMember[]
+  schedules Schedule[]
+  todos Todo[]
+}
+
+model TripMember {
+  id Int @id @default(autoincrement())
+  tripId Int
+  userId Int
+  joinedAt DateTime @default(now())
+
+  // リレーション
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // 同じユーザーが同じプランに重複参加できないようにする
+  @@unique([tripId, userId])
+}
+
+model Schedule {
+  id Int @id @default(autoincrement())
+  tripId Int
+  title String
+  description String
+  date DateTime
+  startTime DateTime
+  endTime DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // リレーション
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+}
+
+model Todo {
+  id Int @id @default(autoincrement())
+  tripId Int
+  title String
+  description String?
+  completed Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // リレーション
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+}

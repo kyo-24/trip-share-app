@@ -1,19 +1,29 @@
 export type tripDataProps = {
+    id: number;
     title: string;
-    coverImage: string;
+    destination: string;
+    budget: number | null;
+    description: string | null;
     startDate: Date;
     endDate: Date;
-    description: string;
-    tags: string[];
-    participants: string[];
+    coverImageUrl: string | null;
+    ownerId: number;
+    owner: {
+        id: number;
+        clerkId: string;
+        name: string | null;
+        email: string;
+        createdAt: Date;
+        updatedAt: Date;
+    };
 };
 
-export type scheduleDataProps = {
+export type ScheduleItem = {
     id: number;
-    day: string;
-    items: {
-        time: string;
-        title: string;
-        description: string;
-    }[];
+    tripId: number;
+    date: Date;
+    startTime: Date;
+    endTime: Date;
+    title: string;
+    description: string;
 };
