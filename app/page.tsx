@@ -48,8 +48,13 @@ export default async function Home() {
                                 <div className="text-sm text-gray-500 mt-2">
                                     <p>
                                         日時：
-                                        {trip.startDate.toLocaleDateString()}〜
-                                        {trip.endDate.toLocaleDateString()}
+                                        {trip.startDate.toLocaleDateString(
+                                            "ja-JP"
+                                        )}
+                                        〜
+                                        {trip.endDate.toLocaleDateString(
+                                            "ja-JP"
+                                        )}
                                     </p>
                                     <p>メモ：{trip.destination}</p>
                                     <p>
