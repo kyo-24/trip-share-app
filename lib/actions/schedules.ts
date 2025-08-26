@@ -25,8 +25,8 @@ export async function createSchedule(formData: FormData, tripId: number) {
         await prisma.schedule.create({
             data: {
                 date: new Date(dateStr),
-                startTime: new Date(`${dateStr}T${startStr}`),
-                endTime: new Date(`${dateStr}T${endStr}`),
+                startTime: new Date(`${dateStr}T${startStr}:00+09:00`),
+                endTime: new Date(`${dateStr}T${endStr}:00+09:00`),
                 title: String(title),
                 description: String(description),
                 tripId: Number(tripId),
@@ -70,9 +70,11 @@ export async function updateSchedule(
                 ...data,
                 date: data.date ? new Date(data.date) : undefined,
                 startTime: data.startTime
-                    ? new Date(data.startTime)
+                    ? new Date(`${data.startTime}:00+09:00`)
                     : undefined,
-                endTime: data.endTime ? new Date(data.endTime) : undefined,
+                endTime: data.endTime
+                    ? new Date(`${data.endTime}:00+09:00`)
+                    : undefined,
             },
         });
 
