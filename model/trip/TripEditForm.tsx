@@ -117,10 +117,15 @@ const TripEditForm = ({ tripData }: { tripData: tripDataProps }) => {
                                         size="lg"
                                         className="mt-2"
                                         onClick={selectFile}
+                                        disabled
                                     >
                                         <Upload className="h-4 w-4 mr-2" />
                                         画像を選択
                                     </Button>
+                                    {/* 画像アップロード機能は実装時削除 */}
+                                    <p className="text-destructive">
+                                        ※画像アップロード機能は今後実装予定
+                                    </p>
                                 </div>
                             </div>
                             {/* )} */}
@@ -234,8 +239,9 @@ const TripEditForm = ({ tripData }: { tripData: tripDataProps }) => {
                         <Subtitle title="メンバー" />
                         <div className="flex gap-2 mt-1.5">
                             <Input
-                                placeholder="メンバー名を入力"
+                                placeholder="メンバー招待機能は今後実装予定"
                                 className="flex-1"
+                                disabled
                             />
                             <Button type="button" size="icon" variant="default">
                                 <Plus className="h-4 w-4 text-white" />
