@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { TabsContent } from "@/components/ui/tabs";
 import { ImageIcon, Plus } from "lucide-react";
-import React from "react";
 
 const Album = () => {
     return (
@@ -22,6 +21,10 @@ const Album = () => {
                     <ImageIcon className="w-12 h-12 mx-auto mb-2 text-gray-400" />
                     <p>
                         写真をドラッグ&ドロップするか、クリックしてアップロード
+                    </p>
+                    {/* 画像アップロード機能は実装時削除 */}
+                    <p className="text-destructive">
+                        ※画像アップロード機能は今後実装予定
                     </p>
                 </div>
             </div>
