@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import { updateTrip } from "@/lib/actions/trips";
+import { formatYmd } from "@/lib/utils";
 import { CalendarIcon, ImageIcon, Plus, Upload } from "lucide-react";
 import Link from "next/link";
 import React, { useRef } from "react";
@@ -178,7 +179,7 @@ const TripEditForm = ({ tripData }: { tripData: tripDataProps }) => {
                             <Input
                                 type="hidden"
                                 name="startDate"
-                                value={startDate ? startDate.toISOString() : ""}
+                                value={startDate ? formatYmd(startDate) : ""}
                             />
                         </div>
 
@@ -212,7 +213,7 @@ const TripEditForm = ({ tripData }: { tripData: tripDataProps }) => {
                             <Input
                                 type="hidden"
                                 name="endDate"
-                                value={endDate ? endDate.toISOString() : ""}
+                                value={endDate ? formatYmd(endDate) : ""}
                             />
                         </div>
                     </div>

@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { formatYmd } from "../utils";
 
 // プラン作成
 export async function createTrip(formData: FormData) {
@@ -183,7 +184,7 @@ export async function searchTripsAction(q: string, limit = 8) {
         return trips.map((t) => ({
             id: t.id,
             title: t.title,
-            createdAt: t.createdAt.toISOString(),
+            createdAt: formatYmd(t.createdAt),
         }));
     } catch (error) {
         console.error("Search trips action error:", error);
