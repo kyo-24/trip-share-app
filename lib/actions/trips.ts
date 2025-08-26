@@ -136,18 +136,18 @@ export async function deleteTrip(id: number) {
         }
 
         if (trip.owner.clerkId !== userId) {
-            throw new Error("Forbidden");
+            throw new Error("プランのオーナー以外は削除できません");
         }
 
         await prisma.trip.delete({
             where: { id },
         });
-
-        return { success: true };
     } catch (error) {
         console.error("Delete trip error:", error);
         return { success: false, error: "Failed to delete trip" };
     }
+    revalidatePath("/");
+    redirect("/");
 }
 
 // 旅行プラン検索処理

@@ -1,3 +1,4 @@
+import DeleteModal from "@/components/common/DeleteModal";
 import { Modal } from "@/components/common/Modal";
 import { Button } from "@/components/ui/button";
 import { DialogClose } from "@/components/ui/dialog";
@@ -11,7 +12,7 @@ import {
 } from "@/lib/actions/schedules";
 import { format } from "date-fns";
 import { Calendar, Clock, Edit3, Plus, Trash2 } from "lucide-react";
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { ScheduleItem } from "../types";
 
 const Schedule = ({
@@ -21,7 +22,6 @@ const Schedule = ({
     scheduleData: ScheduleItem[] | null;
     tripId: number;
 }) => {
-    const [isPending, startTransition] = useTransition();
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [editingSchedule, setEditingSchedule] = useState<ScheduleItem | null>(
         null
@@ -74,6 +74,7 @@ const Schedule = ({
             await createSchedule(formData, tripId);
         }
         handleCloseModal();
+        setEditingSchedule(null);
     };
 
     return (
@@ -275,30 +276,35 @@ const Schedule = ({
                                                                     schedule
                                                                 )
                                                             }
-                                                            disabled={isPending}
                                                             variant="outline"
                                                             size="sm"
                                                             className="text-blue-600 hover:bg-blue-50"
                                                         >
                                                             <Edit3 size={16} />
                                                         </Button>
-                                                        <Button
-                                                            onClick={() => {
-                                                                startTransition(
-                                                                    () => {
-                                                                        deleteSchedule(
-                                                                            schedule.id
-                                                                        );
-                                                                    }
-                                                                );
-                                                            }}
-                                                            disabled={isPending}
-                                                            variant="delete"
-                                                            size="sm"
-                                                            className="text-white"
-                                                        >
-                                                            <Trash2 size={16} />
-                                                        </Button>
+                                                        <DeleteModal
+                                                            title="予定の削除"
+                                                            trigger={
+                                                                <Button
+                                                                    variant="delete"
+                                                                    size="sm"
+                                                                    className="text-white"
+                                                                >
+                                                                    <Trash2
+                                                                        size={
+                                                                            16
+                                                                        }
+                                                                    />
+                                                                </Button>
+                                                            }
+                                                            handleDelete={() =>
+                                                                deleteSchedule(
+                                                                    Number(
+                                                                        schedule.id
+                                                                    )
+                                                                )
+                                                            }
+                                                        />
                                                     </div>
                                                 </div>
                                             ))}

@@ -1,7 +1,10 @@
 "use client";
 
+import DeleteModal from "@/components/common/DeleteModal";
+import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Clock, MapPin, Users } from "lucide-react";
+import { deleteTrip } from "@/lib/actions/trips";
+import { Clock, MapPin, Trash2, Users } from "lucide-react";
 import Album from "./components/Album";
 import Overview from "./components/Overview";
 import Schedule from "./components/Schedule";
@@ -61,6 +64,18 @@ const TripDetailForm = ({
                         </div>
                     </div>
                 </div>
+                <DeleteModal
+                    title="旅行プランの削除"
+                    trigger={
+                        <Button
+                            variant={"destructive"}
+                            className="absolute top-4 right-4 bg-red-600 hover:bg-red-700"
+                        >
+                            <Trash2 className="w-4 h-4" />
+                        </Button>
+                    }
+                    handleDelete={() => deleteTrip(Number(tripData.id))}
+                />
             </div>
 
             {/* Content */}
