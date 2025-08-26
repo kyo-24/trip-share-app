@@ -120,7 +120,7 @@ const TodoList = ({ todos, tripId }: TodoListProps) => {
                     />
                 ) : (
                     <div className="border rounded-lg p-4 text-center text-gray-500">
-                        まだTODOが登録されていません
+                        まだタスクが登録されていません
                     </div>
                 )}
             </div>

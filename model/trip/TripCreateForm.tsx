@@ -53,7 +53,7 @@ const TripCreateForm = () => {
             <form className="space-y-8" action={createTrip}>
                 <div className="space-y-6">
                     <div>
-                        <Subtitle title="旅行タイトル" />
+                        <Subtitle title="旅行タイトル" required />
                         <Input
                             id="title"
                             name="title"
@@ -66,24 +66,6 @@ const TripCreateForm = () => {
                     <div>
                         <Subtitle title="カバー画像" />
                         <div className="mt-1.5">
-                            {/* {coverImage ? (
-                    <div className="relative rounded-md overflow-hidden border">
-                        <Image
-                        src={coverImage || "/placeholder.svg"}
-                        alt="カバー画像"
-                        className="w-full aspect-video object-cover"
-                        />
-                        <Button
-                        type="button"
-                        variant="destructive"
-                        size="icon"
-                        className="absolute top-2 right-2 h-8 w-8 rounded-full opacity-90"
-                        onClick={}
-                        >
-                        <X className="h-4 w-4" />
-                        </Button>
-                    </div>
-                    ) : ( */}
                             <div className="border border-dashed border-black/30 rounded-md p-8 text-center cursor-pointer hover:bg-gray/10 duration-500 transition-color bg-white">
                                 <div className="flex flex-col items-center gap-2">
                                     <div className="p-3 rounded-full bg-primary/10">
@@ -103,20 +85,24 @@ const TripCreateForm = () => {
                                         size="lg"
                                         className="mt-2"
                                         onClick={selectFile}
+                                        disabled={true}
                                     >
                                         <Upload className="h-4 w-4 mr-2" />
                                         画像を選択
                                     </Button>
+                                    {/* 画像アップロード機能は実装時削除 */}
+                                    <p className="text-destructive">
+                                        ※画像アップロード機能は今後実装予定
+                                    </p>
                                 </div>
                             </div>
-                            {/* )} */}
-                            <input
+                            {/* <input
                                 type="file"
                                 name="coverImageUrl"
                                 ref={fileInputRef}
                                 accept="image/*"
                                 className="hidden"
-                            />
+                            /> */}
                         </div>
                     </div>
 
@@ -219,8 +205,9 @@ const TripCreateForm = () => {
                         <Subtitle title="メンバー" />
                         <div className="flex gap-2 mt-1.5">
                             <Input
-                                placeholder="メンバー名を入力"
-                                className="flex-1"
+                                placeholder="メンバー招待機能は今後実装予定"
+                                className="flex-1 text-destructive"
+                                disabled={true}
                             />
                             <Button type="button" size="icon" variant="default">
                                 <Plus className="h-4 w-4 text-white" />
