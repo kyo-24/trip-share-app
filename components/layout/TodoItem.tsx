@@ -5,6 +5,7 @@ import {
 } from "@/lib/actions/todos";
 import { Check, Edit3, Trash2, X } from "lucide-react";
 import React, { useState, useTransition } from "react";
+import DeleteModal from "../common/DeleteModal";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 
@@ -39,12 +40,6 @@ const TodoItem: React.FC<TodoItemProps> = ({ task }) => {
         setIsEditing(false);
     };
 
-    const handleDeleteTask = () => {
-        startTransition(() => {
-            deleteTodo(parseInt(task.id));
-        });
-    };
-
     const handleKeyPress = (e: React.KeyboardEvent) => {
         if (e.key === "Enter") {
             handleSaveEdit();
@@ -72,7 +67,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ task }) => {
                     onClick={handleToggleComplete}
                     disabled={isPending}
                     className={`
-            flex items-center justify-center w-5 h-5 rounded border-2 transition-all duration-200
+            flex items-center justify-center w-5 h-5 rounded border-2 transition-all duration-200 cursor-pointer
             ${
                 task.completed
                     ? "bg-blue-500 border-blue-500 text-white"
@@ -140,16 +135,20 @@ const TodoItem: React.FC<TodoItemProps> = ({ task }) => {
                             >
                                 <Edit3 size={16} />
                             </Button>
-                            <Button
-                                onClick={handleDeleteTask}
-                                disabled={isPending}
-                                title="削除"
-                                variant="delete"
-                                size="sm"
-                                className="text-white"
-                            >
-                                <Trash2 size={16} />
-                            </Button>
+                            <DeleteModal
+                                title="タスクの削除"
+                                trigger={
+                                    <Button
+                                        disabled={isPending}
+                                        variant="delete"
+                                        size="sm"
+                                        className="text-white"
+                                    >
+                                        <Trash2 size={16} />
+                                    </Button>
+                                }
+                                handleDelete={() => deleteTodo(Number(task.id))}
+                            />
                         </>
                     )}
                 </div>
