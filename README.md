@@ -2,7 +2,7 @@
 
 ## 📖 使い方
 
-アプリ→ [trip-share-app.vercel.app](trip-share-app.vercel.app)
+アプリ→ [trip-share-app.vercel.app](https://trip-share-app.vercel.app/)
 
 テストユーザー                
 →メールアドレス：kyosuke.1024.lulu@gmail.com       
