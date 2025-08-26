@@ -56,7 +56,7 @@ export default async function Home() {
                                             "ja-JP"
                                         )}
                                     </p>
-                                    <p>メモ：{trip.destination}</p>
+                                    <p>旅行先：{trip.destination}</p>
                                     <p>
                                         予算：{trip.budget.toLocaleString()}円
                                     </p>
