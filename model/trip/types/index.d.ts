@@ -6,7 +6,8 @@ export type tripDataProps = {
     description: string | null;
     startDate: Date;
     endDate: Date;
-    coverImageUrl: string | null;
+    originalFileName: string | null;
+    fileName: string | null;
     ownerId: number;
     owner: {
         id: number;
@@ -32,8 +33,9 @@ export type ScheduleItem = {
 export type Photo = {
     id: number;
     tripId: number;
+    userId: number;
     fileName: string;
     originalName: string;
-    description: string;
+    description: string | null;
     uploadedAt: Date;
 };

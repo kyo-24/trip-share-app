@@ -1,5 +1,3 @@
-import { supabase } from "./supabase";
-
 // 写真一覧取得
 // export async function getPhotos(tripId: number) {
 //     try {
@@ -47,10 +45,3 @@ import { supabase } from "./supabase";
 //         return [];
 //     }
 // }
-
-// getPhotoUrlを同期関数に変更
-export function getPhotoUrl(fileName: string) {
-    const { data } = supabase.storage.from("trip-photo").getPublicUrl(fileName);
-
-    return data.publicUrl;
-}

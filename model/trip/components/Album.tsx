@@ -8,10 +8,10 @@ import { Input } from "@/components/ui/input";
 import { TabsContent } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { deletePhoto, uploadPhoto } from "@/lib/actions/photos";
-import { getPhotoUrl } from "@/lib/getPhoto";
+import { getPhotoUrl } from "@/lib/getImage";
 import { ImageIcon, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
-import { useRef, useState, useTransition } from "react";
+import { useRef, useState } from "react";
 import { Photo } from "../types";
 
 interface AlbumProps {
@@ -20,21 +20,8 @@ interface AlbumProps {
 }
 
 const Album = ({ tripId, photos }: AlbumProps) => {
-    const [isPending, startTransition] = useTransition();
     const [isOpenModal, setIsOpenModal] = useState(false);
-    // const [loading, setLoading] = useState(true);
     const [file, setFile] = useState<File | null>(null);
-
-    // const handleUpload = async (formData: FormData) => {
-    //     const result = await uploadPhoto(formData, tripId);
-    //     console.log(result);
-    //     if (result.success) {
-    //         setIsOpenModal(false);
-    //         // 写真一覧を再取得
-    //         const photoList = await getPhotos(tripId);
-    //         setPhotos(photoList);
-    //     }
-    // };
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -47,8 +34,6 @@ const Album = ({ tripId, photos }: AlbumProps) => {
         ...photo,
         photoUrl: getPhotoUrl(photo.fileName),
     }));
-
-    console.log(photosWithUrls);
 
     return (
         <TabsContent value="album" className="mt-6">

@@ -8,7 +8,6 @@ import { revalidatePath } from "next/cache";
 // 写真アップロード
 export async function uploadPhoto(formData: FormData, tripId: number) {
     try {
-        console.log(formData);
         const { userId } = await auth();
         if (!userId) {
             throw new Error("Unauthorized");
@@ -16,8 +15,6 @@ export async function uploadPhoto(formData: FormData, tripId: number) {
 
         const file = formData.get("photo") as File;
         const description = formData.get("description") as string;
-        console.log(file);
-        console.log(description);
 
         if (!file) {
             throw new Error("No file provided");
@@ -69,8 +66,15 @@ export async function uploadPhoto(formData: FormData, tripId: number) {
         const extension = file.name.split(".").pop();
         const fileName = `trip_${tripId}_photo_${timestamp}_${randomId}.${extension}`;
 
-        console.log(fileName);
-
+        await prisma.photo.create({
+            data: {
+                tripId: tripId,
+                userId: user.id,
+                fileName: fileName,
+                originalName: file.name,
+                description: description || null,
+            },
+        });
         // Supabase Storageにアップロード
         const { data: uploadData, error: uploadError } = await supabase.storage
             .from("trip-photo")
@@ -81,16 +85,6 @@ export async function uploadPhoto(formData: FormData, tripId: number) {
         }
 
         // データベースにメタデータを保存
-        await prisma.photo.create({
-            data: {
-                tripId: tripId,
-                userId: user.id,
-                fileName: fileName,
-                originalName: file.name,
-                description: description || null,
-            },
-        });
-
         revalidatePath(`/trip/${tripId}`);
         return { success: true };
     } catch (error) {
@@ -143,21 +137,18 @@ export async function deletePhoto(photoId: number) {
             throw new Error("Photo not found or access denied");
         }
 
-        // DBの削除とstorageの削除を必ず両方行う
-        await prisma.$transaction(async (tx) => {
-            // データベースから削除
-            await prisma.photo.delete({
-                where: { id: photoId },
-            });
-            // Supabase Storageから削除
-            const { error: deleteError } = await supabase.storage
-                .from("trip-photo")
-                .remove([photo.fileName]);
-
-            if (deleteError) {
-                console.error("Storage delete error:", deleteError);
-            }
+        // データベースから削除
+        await prisma.photo.delete({
+            where: { id: photoId },
         });
+        // Supabase Storageから削除
+        const { error: deleteError } = await supabase.storage
+            .from("trip-photo")
+            .remove([photo.fileName]);
+
+        if (deleteError) {
+            console.error("Storage delete error:", deleteError);
+        }
 
         revalidatePath(`/trip/${photo.tripId}`);
         return { success: true };
