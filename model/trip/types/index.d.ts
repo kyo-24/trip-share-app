@@ -16,6 +16,7 @@ export type tripDataProps = {
         createdAt: Date;
         updatedAt: Date;
     };
+    photos: Photo[];
 };
 
 export type ScheduleItem = {
@@ -26,4 +27,13 @@ export type ScheduleItem = {
     endTime: Date;
     title: string;
     description: string;
+};
+
+export type Photo = {
+    id: number;
+    tripId: number;
+    fileName: string;
+    originalName: string;
+    description: string;
+    uploadedAt: Date;
 };

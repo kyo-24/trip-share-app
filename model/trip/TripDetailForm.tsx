@@ -115,7 +115,7 @@ const TripDetailForm = ({
                             tripId={tripData.id}
                         />
                         <TodoList todos={todos} tripId={tripData.id} />
-                        <Album />
+                        <Album tripId={tripData.id} photos={tripData.photos} />
                     </Tabs>
                 </div>
             </div>

@@ -56,6 +56,7 @@ export async function getTripDetail(id: number) {
                 },
                 schedules: true,
                 todos: true,
+                photos: true,
             },
         });
 
