@@ -148,6 +148,7 @@ export async function updateTrip(
                 await supabase.storage
                     .from("trip-cover-image")
                     .upload(fileName, data.coverImage, { upsert: true });
+            console.log("uploadData", uploadData);
 
             if (uploadError) {
                 throw new Error(`Upload failed: ${uploadError.message}`);
