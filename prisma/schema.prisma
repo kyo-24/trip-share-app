@@ -33,7 +33,8 @@ model Trip {
   description String?
   startDate DateTime
   endDate DateTime
-  coverImageUrl String?
+  originalFileName String?
+  fileName String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -43,6 +44,7 @@ model Trip {
   members TripMember[]
   schedules Schedule[]
   todos Todo[]
+  photos Photo[]
 }
 
 model TripMember {
@@ -82,6 +84,19 @@ model Todo {
   completed Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  // リレーション
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+}
+
+model Photo {
+  id Int @id @default(autoincrement())
+  tripId Int
+  userId Int
+  fileName String // Supabase Storageのファイル名
+  originalName String // 元のファイル名
+  description String?
+  uploadedAt DateTime @default(now())
 
   // リレーション
   trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)

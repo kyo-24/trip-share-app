@@ -7,8 +7,10 @@ import {
 } from "@/components/ui/card";
 import { syncUser } from "@/lib/actions/sync";
 import { getUserData } from "@/lib/auth";
+import { getCoverImage } from "@/lib/getImage";
 import { getTrips } from "@/lib/getTrip";
 import { PlusCircle } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 export default async function Home() {
@@ -39,7 +41,17 @@ export default async function Home() {
                     <Link href={`/trip/${trip.id}`} key={trip.id}>
                         <Card className="py-0 border-0 shadow-lg cursor-pointer bg-white">
                             <CardHeader className="px-0">
-                                <div className="w-full h-[200px] bg-gray-200 rounded-xl rounded-b-none"></div>
+                                {trip.fileName ? (
+                                    <Image
+                                        src={getCoverImage(trip.fileName)}
+                                        alt={trip.title}
+                                        width={1000}
+                                        height={200}
+                                        className="w-full h-[200px] object-cover rounded-xl rounded-b-none"
+                                    />
+                                ) : (
+                                    <div className="w-full h-[200px] bg-gray-200 rounded-xl rounded-b-none"></div>
+                                )}
                             </CardHeader>
                             <CardContent className="p-4">
                                 <h2 className="font-semibold text-2xl ">

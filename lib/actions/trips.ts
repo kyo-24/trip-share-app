@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { supabase } from "../supabase";
 import { formatYmd } from "../utils";
 
 // プラン作成
@@ -20,9 +21,7 @@ export async function createTrip(formData: FormData) {
         const description = formData.get("description");
         const startDate = formData.get("startDate");
         const endDate = formData.get("endDate");
-        const coverImage = formData.get("coverImageUrl");
-        const coverImageUrl =
-            typeof coverImage === "string" ? coverImage : undefined;
+        const coverImage = formData.get("coverImage") as File;
 
         console.log(
             title,
@@ -31,7 +30,7 @@ export async function createTrip(formData: FormData) {
             description,
             startDate,
             endDate,
-            coverImageUrl
+            coverImage
         );
 
         // バリデーション
@@ -47,6 +46,12 @@ export async function createTrip(formData: FormData) {
             throw new Error("User not found");
         }
 
+        // ユニークなファイル名を生成
+        const timestamp = Date.now();
+        const randomId = Math.random().toString(36).substring(2);
+        const extension = coverImage.name.split(".").pop();
+        const fileName = `cover_image_${timestamp}_${randomId}.${extension}`;
+
         await prisma.trip.create({
             data: {
                 title: String(title),
@@ -55,10 +60,21 @@ export async function createTrip(formData: FormData) {
                 description: description ? String(description) : null,
                 startDate: new Date(String(startDate)),
                 endDate: new Date(String(endDate)),
-                coverImageUrl: coverImageUrl ?? null,
+                originalFileName: coverImage ? coverImage.name : null,
+                fileName: fileName,
                 ownerId: user.id,
             },
         });
+
+        const { data: uploadData, error: uploadError } = await supabase.storage
+            .from("trip-cover-image")
+            .upload(fileName, coverImage);
+
+        console.log("uploadData", uploadData);
+
+        if (uploadError) {
+            throw new Error(`Upload failed: ${uploadError.message}`);
+        }
     } catch (error) {
         console.error("Create trip error:", error);
         throw new Error("Failed to create trip");
@@ -77,7 +93,7 @@ export async function updateTrip(
         description?: string;
         startDate?: string;
         endDate?: string;
-        coverImageUrl?: string | undefined;
+        coverImage?: File | undefined;
     }
 ) {
     try {
@@ -100,16 +116,44 @@ export async function updateTrip(
             throw new Error("Forbidden");
         }
 
+        // ユニークなファイル名を生成
+        const timestamp = Date.now();
+        const randomId = Math.random().toString(36).substring(2);
+        const extension = data.coverImage?.name.split(".").pop();
+        const fileName = `cover_image_${timestamp}_${randomId}.${extension}`;
+
         await prisma.trip.update({
             where: { id },
             data: {
-                ...data,
+                title: data.title,
+                destination: data.destination,
+                budget: data.budget,
+                description: data.description,
                 startDate: data.startDate
                     ? new Date(data.startDate)
                     : undefined,
                 endDate: data.endDate ? new Date(data.endDate) : undefined,
+                originalFileName: data.coverImage ? data.coverImage.name : null,
+                fileName,
             },
         });
+
+        if (data.coverImage) {
+            if (trip.fileName) {
+                await supabase.storage
+                    .from("trip-cover-image")
+                    .remove([trip.fileName]);
+            }
+            const { data: uploadData, error: uploadError } =
+                await supabase.storage
+                    .from("trip-cover-image")
+                    .upload(fileName, data.coverImage, { upsert: true });
+            console.log("uploadData", uploadData);
+
+            if (uploadError) {
+                throw new Error(`Upload failed: ${uploadError.message}`);
+            }
+        }
     } catch (error) {
         console.error("Update trip error:", error);
         return { success: false, error: "Failed to update trip" };
@@ -138,6 +182,22 @@ export async function deleteTrip(id: number) {
 
         if (trip.owner.clerkId !== userId) {
             throw new Error("プランのオーナー以外は削除できません");
+        }
+
+        const photos = await prisma.photo.findMany({ where: { tripId: id } });
+
+        // アルバム写真削除
+        if (photos.length > 0) {
+            await supabase.storage
+                .from("trip-photo")
+                .remove(photos.map((p) => p.fileName));
+        }
+
+        // カバー画像削除
+        if (trip?.fileName) {
+            await supabase.storage
+                .from("trip-cover-image")
+                .remove([trip.fileName]);
         }
 
         await prisma.trip.delete({

@@ -18,7 +18,9 @@ import {
     ImageIcon,
     Plus,
     Upload,
+    X,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import React, { useRef } from "react";
 
@@ -27,17 +29,23 @@ const TripCreateForm = () => {
         new Date()
     );
     const [endDate, setEndDate] = React.useState<Date | undefined>(new Date());
+    const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
-
-    const selectFile = () => {
-        fileInputRef?.current?.click();
-    };
 
     const formatDate = (date: Date) => {
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, "0");
         const day = String(date.getDate()).padStart(2, "0");
         return `${year}年${month}月${day}日`;
+    };
+
+    const selectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = e.target.files?.[0];
+        if (selectedFile) {
+            setPreviewUrl(URL.createObjectURL(selectedFile));
+        } else {
+            setPreviewUrl(null);
+        }
     };
 
     return (
@@ -67,43 +75,63 @@ const TripCreateForm = () => {
                     <div>
                         <Subtitle title="カバー画像" />
                         <div className="mt-1.5">
-                            <div className="border border-dashed border-black/30 rounded-md p-8 text-center cursor-pointer hover:bg-gray/10 duration-500 transition-color bg-white">
-                                <div className="flex flex-col items-center gap-2">
-                                    <div className="p-3 rounded-full bg-primary/10">
-                                        <ImageIcon className="h-6 w-6 text-primary" />
-                                    </div>
-                                    <div>
-                                        <p className="font-semibold">
-                                            画像をアップロード
-                                        </p>
-                                        <p className="text-sm text-muted-foreground mt-1">
-                                            クリックして画像を選択するか、ここにドラッグ&ドロップしてください
-                                        </p>
-                                    </div>
+                            {previewUrl ? (
+                                <div className="relative rounded-md overflow-hidden border">
+                                    <Image
+                                        src={previewUrl}
+                                        alt="カバー画像"
+                                        className="w-full h-80 object-top object-cover"
+                                        width={1200}
+                                        height={400}
+                                    />
                                     <Button
                                         type="button"
-                                        variant="default"
-                                        size="lg"
-                                        className="mt-2"
-                                        onClick={selectFile}
-                                        disabled={true}
+                                        variant="destructive"
+                                        size="icon"
+                                        className="absolute top-2 right-2 h-8 w-8 rounded-full opacity-90"
+                                        onClick={() => setPreviewUrl(null)}
                                     >
-                                        <Upload className="h-4 w-4 mr-2" />
-                                        画像を選択
+                                        <X className="h-4 w-4" />
                                     </Button>
-                                    {/* 画像アップロード機能は実装時削除 */}
-                                    <p className="text-destructive">
-                                        ※画像アップロード機能は今後実装予定
-                                    </p>
                                 </div>
-                            </div>
-                            {/* <input
+                            ) : (
+                                <div className="border border-dashed border-black/30 rounded-md p-8 text-center cursor-pointer hover:bg-gray/10 duration-500 transition-color bg-white">
+                                    <div className="flex flex-col items-center gap-2">
+                                        <div className="p-3 rounded-full bg-primary/10">
+                                            <ImageIcon className="h-6 w-6 text-primary" />
+                                        </div>
+                                        <div>
+                                            <p className="font-semibold">
+                                                画像をアップロード
+                                            </p>
+                                            <p className="text-sm text-muted-foreground mt-1">
+                                                クリックして画像を選択するか、ここにドラッグ&ドロップしてください
+                                            </p>
+                                        </div>
+                                        <Button
+                                            type="button"
+                                            variant="default"
+                                            size="lg"
+                                            className="mt-2"
+                                            onClick={() =>
+                                                fileInputRef.current?.click()
+                                            }
+                                        >
+                                            <Upload className="h-4 w-4 mr-2" />
+                                            画像を選択
+                                        </Button>
+                                    </div>
+                                </div>
+                            )}
+                            <Input
                                 type="file"
-                                name="coverImageUrl"
+                                name="coverImage"
                                 ref={fileInputRef}
                                 accept="image/*"
                                 className="hidden"
-                            /> */}
+                                onChange={selectFile}
+                                required
+                            />
                         </div>
                     </div>
 

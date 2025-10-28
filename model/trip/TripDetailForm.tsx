@@ -4,7 +4,9 @@ import DeleteModal from "@/components/common/DeleteModal";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { deleteTrip } from "@/lib/actions/trips";
+import { getCoverImage } from "@/lib/getImage";
 import { Clock, MapPin, Trash2, Users } from "lucide-react";
+import Image from "next/image";
 import Album from "./components/Album";
 import Overview from "./components/Overview";
 import Schedule from "./components/Schedule";
@@ -28,17 +30,22 @@ const TripDetailForm = ({
     scheduleData: ScheduleItem[] | null;
     todos: Todo[];
 }) => {
+    const coverImageUrl = getCoverImage(tripData.fileName || "");
     return (
         <div className="min-h-screen bg-secondary">
             {/* Header */}
-            <div
-                className="h-64  bg-center relative"
-                style={{ backgroundImage: `url(${tripData.coverImageUrl})` }}
-            >
-                <div className="absolute inset-0 bg-black bg-opacity-40">
+            <div className="h-64  bg-center relative">
+                <Image
+                    src={coverImageUrl}
+                    alt="カバー画像"
+                    width={1200}
+                    height={200}
+                    className="w-full h-64 object-top object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-black/80">
                     <div className="container mx-auto px-6 h-full flex items-end pb-8">
                         <div className="text-white">
-                            <h1 className="text-4xl font-bold mb-2">
+                            <h1 className="text-4xl font-bold mb-2 text-white">
                                 {tripData.title}
                             </h1>
                             <div className="flex items-center gap-4">
@@ -115,7 +122,7 @@ const TripDetailForm = ({
                             tripId={tripData.id}
                         />
                         <TodoList todos={todos} tripId={tripData.id} />
-                        <Album />
+                        <Album tripId={tripData.id} photos={tripData.photos} />
                     </Tabs>
                 </div>
             </div>
