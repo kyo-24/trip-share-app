@@ -70,6 +70,8 @@ export async function createTrip(formData: FormData) {
             .from("trip-cover-image")
             .upload(fileName, coverImage);
 
+        console.log("uploadData", uploadData);
+
         if (uploadError) {
             throw new Error(`Upload failed: ${uploadError.message}`);
         }

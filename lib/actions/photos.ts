@@ -80,6 +80,8 @@ export async function uploadPhoto(formData: FormData, tripId: number) {
             .from("trip-photo")
             .upload(fileName, file);
 
+        console.log("uploadData", uploadData);
+
         if (uploadError) {
             throw new Error(`Upload failed: ${uploadError.message}`);
         }
