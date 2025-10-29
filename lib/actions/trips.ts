@@ -21,7 +21,11 @@ export async function createTrip(formData: FormData) {
         const description = formData.get("description");
         const startDate = formData.get("startDate");
         const endDate = formData.get("endDate");
-        const coverImage = formData.get("coverImage") as File;
+        const coverImageEntry = formData.get("coverImage");
+        const coverImage =
+            coverImageEntry instanceof File && coverImageEntry.size > 0
+                ? (coverImageEntry as File)
+                : undefined;
 
         console.log(
             title,
@@ -49,8 +53,10 @@ export async function createTrip(formData: FormData) {
         // ユニークなファイル名を生成
         const timestamp = Date.now();
         const randomId = Math.random().toString(36).substring(2);
-        const extension = coverImage.name.split(".").pop();
-        const fileName = `cover_image_${timestamp}_${randomId}.${extension}`;
+        const extension = coverImage?.name.split(".").pop();
+        const fileName = coverImage
+            ? `cover_image_${timestamp}_${randomId}.${extension}`
+            : null;
 
         await prisma.trip.create({
             data: {
@@ -65,15 +71,17 @@ export async function createTrip(formData: FormData) {
                 ownerId: user.id,
             },
         });
+        if (coverImage && fileName) {
+            const { data: uploadData, error: uploadError } =
+                await supabase.storage
+                    .from("trip-cover-image")
+                    .upload(fileName, coverImage);
 
-        const { data: uploadData, error: uploadError } = await supabase.storage
-            .from("trip-cover-image")
-            .upload(fileName, coverImage);
+            console.log("uploadData", uploadData);
 
-        console.log("uploadData", uploadData);
-
-        if (uploadError) {
-            throw new Error(`Upload failed: ${uploadError.message}`);
+            if (uploadError) {
+                throw new Error(`Upload failed: ${uploadError.message}`);
+            }
         }
     } catch (error) {
         console.error("Create trip error:", error);
@@ -96,6 +104,7 @@ export async function updateTrip(
         coverImage?: File | undefined;
     }
 ) {
+    console.log(data);
     try {
         const { userId } = await auth();
         if (!userId) {
@@ -116,11 +125,23 @@ export async function updateTrip(
             throw new Error("Forbidden");
         }
 
-        // ユニークなファイル名を生成
+        // coverImage が有効なときのみ扱う
+        const coverImage =
+            data.coverImage && data.coverImage.size > 0
+                ? data.coverImage
+                : undefined;
+
+        console.log(coverImage);
+
+        // ユニークなファイル名を生成（新しい画像がある場合のみ）
         const timestamp = Date.now();
         const randomId = Math.random().toString(36).substring(2);
-        const extension = data.coverImage?.name.split(".").pop();
-        const fileName = `cover_image_${timestamp}_${randomId}.${extension}`;
+        const extension = coverImage?.name.split(".").pop();
+        const fileName = coverImage
+            ? `cover_image_${timestamp}_${randomId}.${extension}`
+            : undefined;
+
+        console.log(fileName);
 
         await prisma.trip.update({
             where: { id },
@@ -133,12 +154,13 @@ export async function updateTrip(
                     ? new Date(data.startDate)
                     : undefined,
                 endDate: data.endDate ? new Date(data.endDate) : undefined,
-                originalFileName: data.coverImage ? data.coverImage.name : null,
-                fileName,
+                // coverImage がなければ既存を変更しない
+                originalFileName: coverImage ? coverImage.name : "",
+                fileName: fileName ?? "",
             },
         });
 
-        if (data.coverImage) {
+        if (coverImage && fileName) {
             if (trip.fileName) {
                 await supabase.storage
                     .from("trip-cover-image")
@@ -147,7 +169,7 @@ export async function updateTrip(
             const { data: uploadData, error: uploadError } =
                 await supabase.storage
                     .from("trip-cover-image")
-                    .upload(fileName, data.coverImage, { upsert: true });
+                    .upload(fileName, coverImage, { upsert: true });
             console.log("uploadData", uploadData);
 
             if (uploadError) {

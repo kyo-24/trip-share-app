@@ -89,7 +89,12 @@ const TripCreateForm = () => {
                                         variant="destructive"
                                         size="icon"
                                         className="absolute top-2 right-2 h-8 w-8 rounded-full opacity-90"
-                                        onClick={() => setPreviewUrl(null)}
+                                        onClick={() => {
+                                            setPreviewUrl(null);
+                                            if (fileInputRef.current) {
+                                                fileInputRef.current.value = "";
+                                            }
+                                        }}
                                     >
                                         <X className="h-4 w-4" />
                                     </Button>
@@ -130,7 +135,6 @@ const TripCreateForm = () => {
                                 accept="image/*"
                                 className="hidden"
                                 onChange={selectFile}
-                                required
                             />
                         </div>
                     </div>

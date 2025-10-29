@@ -48,7 +48,11 @@ const TripEditForm = ({ tripData }: { tripData: tripDataProps }) => {
     };
 
     const selectFile = () => {
-        setFile(fileInputRef.current?.files?.[0] || null);
+        const selected = fileInputRef.current?.files?.[0] || null;
+        setFile(selected);
+        if (selected) {
+            setCoverImageUrl(null);
+        }
     };
 
     const formatDate = (date: Date) => {
@@ -95,7 +99,13 @@ const TripEditForm = ({ tripData }: { tripData: tripDataProps }) => {
                                         variant="destructive"
                                         size="icon"
                                         className="absolute top-2 right-2 h-8 w-8 rounded-full opacity-90 cursor-pointer"
-                                        onClick={() => setCoverImageUrl(null)}
+                                        onClick={() => {
+                                            setCoverImageUrl(null);
+                                            setFile(null);
+                                            if (fileInputRef.current) {
+                                                fileInputRef.current.value = "";
+                                            }
+                                        }}
                                     >
                                         <X className="h-4 w-4" />
                                     </Button>
@@ -109,6 +119,21 @@ const TripEditForm = ({ tripData }: { tripData: tripDataProps }) => {
                                         width={1200}
                                         height={200}
                                     />
+                                    <Button
+                                        type="button"
+                                        variant="destructive"
+                                        size="icon"
+                                        className="absolute top-2 right-2 h-8 w-8 rounded-full opacity-90 cursor-pointer"
+                                        onClick={() => {
+                                            setCoverImageUrl(null);
+                                            setFile(null);
+                                            if (fileInputRef.current) {
+                                                fileInputRef.current.value = "";
+                                            }
+                                        }}
+                                    >
+                                        <X className="h-4 w-4" />
+                                    </Button>
                                 </div>
                             ) : (
                                 <div className="border border-dashed border-black/30 rounded-md p-8 text-center cursor-pointer hover:bg-gray/10 duration-500 transition-color bg-white">
