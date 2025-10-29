@@ -28,7 +28,7 @@ const TripEditForm = ({ tripData }: { tripData: tripDataProps }) => {
     );
     const [file, setFile] = React.useState<File | null>(null);
     const [coverImageUrl, setCoverImageUrl] = React.useState<string | null>(
-        getCoverImage(tripData.fileName || "")
+        tripData.fileName ? getCoverImage(tripData.fileName) : null
     );
     const fileInputRef = useRef<HTMLInputElement>(null);
 

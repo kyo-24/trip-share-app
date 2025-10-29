@@ -30,18 +30,24 @@ const TripDetailForm = ({
     scheduleData: ScheduleItem[] | null;
     todos: Todo[];
 }) => {
-    const coverImageUrl = getCoverImage(tripData.fileName || "");
+    const coverImageUrl = tripData.fileName
+        ? getCoverImage(tripData.fileName)
+        : null;
     return (
         <div className="min-h-screen bg-secondary">
             {/* Header */}
             <div className="h-64  bg-center relative">
-                <Image
-                    src={coverImageUrl}
-                    alt="カバー画像"
-                    width={1200}
-                    height={200}
-                    className="w-full h-64 object-top object-cover"
-                />
+                {coverImageUrl ? (
+                    <Image
+                        src={coverImageUrl}
+                        alt="カバー画像"
+                        width={1200}
+                        height={200}
+                        className="w-full h-64 object-top object-cover"
+                    />
+                ) : (
+                    <div className="w-full h-64 bg-gray-200"></div>
+                )}
                 <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-black/80">
                     <div className="container mx-auto px-6 h-full flex items-end pb-8">
                         <div className="text-white">
