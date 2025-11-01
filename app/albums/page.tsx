@@ -1,12 +1,23 @@
-export default function Albums() {
-    return (
-        <div>
-            <h1>アルバム一覧ページ</h1>
-            <p>全ての旅行のアルバムを一覧で表示するページ</p>
-            <p>
-                <span className="text-destructive">今後実装予定</span>
-            </p>
-        </div>
-    );
+import { getUserData } from "@/lib/auth";
+import { getPhotos } from "@/lib/getPhoto";
+import { getTrips } from "@/lib/getTrip";
+import AlbumsList from "@/model/albums/AlbumsList";
+
+type AlbumsProps = {
+    searchParams: Promise<{ tripId?: string }>;
+};
+
+export default async function Albums({ searchParams }: AlbumsProps) {
+    const { user } = await getUserData();
+    if (!user) {
+        return <div>ユーザーが存在しません</div>;
+    }
+
+    const params = await searchParams;
+    const tripId = params.tripId ? Number(params.tripId) : undefined;
+
+    const photos = await getPhotos(user.id, tripId);
+    const trips = await getTrips();
+
+    return <AlbumsList photos={photos} trips={trips} tripId={tripId} />;
 }
-// アルバム一覧ページの実装は後ほど

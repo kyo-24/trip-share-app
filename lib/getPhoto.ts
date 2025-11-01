@@ -1,47 +1,12 @@
+import { prisma } from "./prisma";
+
 // 写真一覧取得
-// export async function getPhotos(tripId: number) {
-//     try {
-//         const { userId } = await auth();
-//         if (!userId) {
-//             return [];
-//         }
-
-//         const user = await prisma.user.findUnique({
-//             where: { clerkId: userId },
-//         });
-
-//         if (!user) {
-//             return [];
-//         }
-
-//         const trip = await prisma.trip.findFirst({
-//             where: {
-//                 id: tripId,
-//                 OR: [
-//                     { ownerId: user.id },
-//                     {
-//                         members: {
-//                             some: {
-//                                 userId: user.id,
-//                             },
-//                         },
-//                     },
-//                 ],
-//             },
-//         });
-
-//         if (!trip) {
-//             return [];
-//         }
-
-//         const photos = await prisma.photo.findMany({
-//             where: { tripId },
-//             orderBy: { uploadedAt: "desc" },
-//         });
-
-//         return photos;
-//     } catch (error) {
-//         console.error("Get photos error:", error);
-//         return [];
-//     }
-// }
+export async function getPhotos(userId: number, tripId?: number) {
+    const photos = await prisma.photo.findMany({
+        where: {
+            userId: userId,
+            ...(tripId && { tripId: tripId }),
+        },
+    });
+    return photos;
+}

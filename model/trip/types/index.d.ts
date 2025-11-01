@@ -9,6 +9,8 @@ export type tripDataProps = {
     originalFileName: string | null;
     fileName: string | null;
     ownerId: number;
+    createdAt: Date;
+    updatedAt: Date;
     owner: {
         id: number;
         clerkId: string;
@@ -38,4 +40,19 @@ export type Photo = {
     originalName: string;
     description: string | null;
     uploadedAt: Date;
+};
+
+export type Trip = {
+    id: number;
+    title: string;
+    destination: string;
+    budget: number | null;
+    description: string | null;
+    startDate: Date;
+    endDate: Date;
+    originalFileName: string | null;
+    fileName: string | null;
+    ownerId: number;
+    createdAt: Date;
+    updatedAt: Date;
 };
