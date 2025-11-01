@@ -23,6 +23,7 @@ model User {
   // リレーション
   ownedTrips Trip[]      // 作成したプラン
   tripMembers TripMember[] // 参加しているプラン
+  invitations Invitation[]
 }
 
 model Trip {
@@ -45,12 +46,14 @@ model Trip {
   schedules Schedule[]
   todos Todo[]
   photos Photo[]
+  invitations Invitation[]
 }
 
 model TripMember {
   id Int @id @default(autoincrement())
   tripId Int
   userId Int
+  role      MemberRole @default(VIEWER)
   joinedAt DateTime @default(now())
 
   // リレーション
@@ -60,6 +63,38 @@ model TripMember {
   // 同じユーザーが同じプランに重複参加できないようにする
   @@unique([tripId, userId])
 }
+enum MemberRole {
+  OWNER
+  EDITOR
+  VIEWER
+}
+
+model Invitation {
+  id           Int          @id @default(autoincrement())
+  tripId       Int
+  invitedEmail String
+  invitedBy    Int
+  token        String          @unique
+  status       InvitationStatus @default(PENDING)
+  expiresAt    DateTime
+  createdAt    DateTime        @default(now())
+
+  // リレーション
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  inviter User @relation(fields: [invitedBy], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([tripId])
+  @@index([invitedBy])
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  REJECTED
+}
+
 
 model Schedule {
   id Int @id @default(autoincrement())
