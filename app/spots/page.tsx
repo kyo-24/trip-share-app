@@ -6,6 +6,9 @@ export default function Spots() {
                 プラン詳細で追加したスポットの場所をgoogle
                 Map上で位置を確認できるページ
             </p>
+            <p>
+                <span className="text-destructive">今後実装予定</span>
+            </p>
         </div>
     );
 }

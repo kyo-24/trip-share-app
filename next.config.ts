@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
     images: {
+        domains: [
+            process.env.NEXT_PUBLIC_SUPABASE_DOMAIN!, // Supabase Storage画像の表示許可
+        ],
         remotePatterns: [
             {
                 protocol: "http",
