@@ -2,15 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { SignOutButton } from "@clerk/nextjs";
-import {
-    Calendar,
-    Home,
-    Image,
-    LogOut,
-    Map,
-    Settings,
-    Users,
-} from "lucide-react";
+import { Calendar, Home, Image, LogOut, Map, Settings } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { Modal } from "../common/Modal";
@@ -21,7 +13,6 @@ const navigation = [
     { name: "ホーム", href: "/", icon: Home },
     { name: "カレンダー", href: "/calendar", icon: Calendar },
     { name: "アルバム", href: "/albums", icon: Image },
-    { name: "メンバー", href: "/members", icon: Users },
     { name: "スポット", href: "/spots", icon: Map },
 ];
 
