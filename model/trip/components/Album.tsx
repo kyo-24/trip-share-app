@@ -22,6 +22,7 @@ interface AlbumProps {
 const Album = ({ tripId, photos }: AlbumProps) => {
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [file, setFile] = useState<File | null>(null);
+    const [selectedPhotoId, setSelectedPhotoId] = useState<number | null>(null);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -35,6 +36,7 @@ const Album = ({ tripId, photos }: AlbumProps) => {
         photoUrl: getPhotoUrl(photo.fileName),
     }));
 
+    const selectedPhoto = photos.find((photo) => photo.id === selectedPhotoId);
     return (
         <TabsContent value="album" className="mt-6">
             <div className="space-y-6">
@@ -63,6 +65,7 @@ const Album = ({ tripId, photos }: AlbumProps) => {
                         action={async (formData) => {
                             await uploadPhoto(formData, tripId);
                             setIsOpenModal(false);
+                            setFile(null);
                         }}
                     >
                         <div>
@@ -115,6 +118,7 @@ const Album = ({ tripId, photos }: AlbumProps) => {
                                 <Button
                                     type="button"
                                     className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                                    onClick={() => setFile(null)}
                                 >
                                     キャンセル
                                 </Button>
@@ -133,33 +137,68 @@ const Album = ({ tripId, photos }: AlbumProps) => {
                 {photosWithUrls.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                         {photosWithUrls.map((photo) => (
-                            <div
-                                key={photo.id}
-                                className="relative group bg-white shadow-md overflow-hidden cursor-pointer hover:scale-105 transition-all duration-300"
-                            >
-                                <Image
-                                    src={photo.photoUrl}
-                                    alt={photo.originalName}
-                                    width={1200}
-                                    height={800}
-                                    className="w-full h-60 object-cover"
-                                />
-                                {photo.description && (
-                                    <p className="absolute bottom-2 left-2 text-xs text-white mt-1 line-clamp-2">
-                                        {photo.description}
-                                    </p>
+                            <div key={photo.id}>
+                                <div
+                                    className="relative group bg-white shadow-md overflow-hidden cursor-pointer hover:scale-105 transition-all duration-300"
+                                    onClick={() => setSelectedPhotoId(photo.id)}
+                                >
+                                    <Image
+                                        src={photo.photoUrl}
+                                        alt={photo.originalName}
+                                        width={1200}
+                                        height={800}
+                                        className="w-full h-60 object-cover"
+                                    />
+                                    {photo.description && (
+                                        <p className="absolute bottom-2 left-2 text-xs text-white mt-1 line-clamp-2">
+                                            {photo.description}
+                                        </p>
+                                    )}
+                                    <DeleteModal
+                                        title="写真の削除"
+                                        trigger={
+                                            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <Button
+                                                    variant="delete"
+                                                    size="sm"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </Button>
+                                            </div>
+                                        }
+                                        handleDelete={() =>
+                                            deletePhoto(photo.id)
+                                        }
+                                    />
+                                </div>
+                                {selectedPhotoId && selectedPhoto && (
+                                    <Modal
+                                        isOpen={selectedPhotoId !== null}
+                                        onOpenChange={(open) => {
+                                            if (!open) setSelectedPhotoId(null);
+                                        }}
+                                    >
+                                        <Image
+                                            src={getPhotoUrl(
+                                                selectedPhoto.fileName ?? ""
+                                            )}
+                                            alt={selectedPhoto.originalName}
+                                            width={500}
+                                            height={500}
+                                            className=""
+                                        />
+                                        {selectedPhoto.description && (
+                                            <div className="flex gap-2">
+                                                <p className="text-sm text-nowrap">
+                                                    コメント：
+                                                </p>
+                                                <p className="text-sm line-clamp-3">
+                                                    {selectedPhoto.description}
+                                                </p>
+                                            </div>
+                                        )}
+                                    </Modal>
                                 )}
-                                <DeleteModal
-                                    title="写真の削除"
-                                    trigger={
-                                        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <Button variant="delete" size="sm">
-                                                <Trash2 className="w-4 h-4" />
-                                            </Button>
-                                        </div>
-                                    }
-                                    handleDelete={() => deletePhoto(photo.id)}
-                                />
                             </div>
                         ))}
                     </div>

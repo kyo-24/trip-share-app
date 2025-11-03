@@ -12,8 +12,8 @@ export function Modal({
     isOpen = false,
     onOpenChange,
 }: {
-    trigger: React.ReactNode;
-    title: string;
+    trigger?: React.ReactNode;
+    title?: string;
     children: React.ReactNode;
     isOpen?: boolean;
     onOpenChange?: (open: boolean) => void;

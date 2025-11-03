@@ -17,7 +17,7 @@ const AlbumsList = ({
     trips: Trip[] | null;
     tripId?: number;
 }) => {
-    const [isOpenModal, setIsOpenModal] = useState(false);
+    const [selectedPhotoId, setSelectedPhotoId] = useState<number | null>(null);
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -33,6 +33,9 @@ const AlbumsList = ({
         },
         [router, searchParams]
     );
+
+    const selectedPhoto = photos.find((photo) => photo.id === selectedPhotoId);
+
     return (
         <div className="p-6">
             <div className="flex justify-between items-center px-4">
@@ -52,44 +55,52 @@ const AlbumsList = ({
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 px-4 py-10">
                 {photos.length > 0 ? (
                     photos.map((photo) => (
-                        <div key={photo.id.toString()}>
-                            <Modal
-                                trigger={
-                                    <div
-                                        className="cursor-pointer"
-                                        onClick={() => setIsOpenModal(true)}
-                                    >
-                                        <Image
-                                            src={getPhotoUrl(
-                                                photo.fileName ?? ""
-                                            )}
-                                            alt={photo.originalName}
-                                            width={300}
-                                            height={300}
-                                            className="aspect-square object-cover"
-                                        />
-                                    </div>
-                                }
-                                title="写真詳細"
-                                isOpen={isOpenModal}
-                                onOpenChange={setIsOpenModal}
+                        <div key={photo.id}>
+                            <div
+                                onClick={() => setSelectedPhotoId(photo.id)}
+                                className="cursor-pointer relative"
                             >
-                                <div>
-                                    {photo.description && (
-                                        <p className="text-2xl font-bold mb-4">
-                                            {photo.description}
-                                        </p>
-                                    )}
+                                <Image
+                                    src={getPhotoUrl(photo.fileName ?? "")}
+                                    alt={photo.originalName}
+                                    width={300}
+                                    height={300}
+                                    className="aspect-square object-cover"
+                                />
+                                {photo.description && (
+                                    <p className="absolute bottom-2 left-2 text-xs text-white mt-1 line-clamp-2">
+                                        {photo.description}
+                                    </p>
+                                )}
+                            </div>
+                            {selectedPhotoId && selectedPhoto && (
+                                <Modal
+                                    isOpen={selectedPhotoId !== null}
+                                    onOpenChange={(open) => {
+                                        if (!open) setSelectedPhotoId(null);
+                                    }}
+                                >
                                     <Image
-                                        src={getPhotoUrl(photo.fileName ?? "")}
-                                        alt={photo.originalName}
+                                        src={getPhotoUrl(
+                                            selectedPhoto.fileName ?? ""
+                                        )}
+                                        alt={selectedPhoto.originalName}
                                         width={500}
                                         height={500}
                                         className=""
                                     />
-                                    <p>{photo.description}</p>
-                                </div>
-                            </Modal>
+                                    {selectedPhoto.description && (
+                                        <div className="flex gap-2">
+                                            <p className="text-sm text-nowrap">
+                                                コメント：
+                                            </p>
+                                            <p className="text-sm line-clamp-3">
+                                                {selectedPhoto.description}
+                                            </p>
+                                        </div>
+                                    )}
+                                </Modal>
+                            )}
                         </div>
                     ))
                 ) : (
