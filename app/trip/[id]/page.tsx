@@ -22,11 +22,15 @@ export default async function TripDetail({
         return <div>旅行が見つかりませんでした。</div>;
     }
 
+    const totalCost = scheduleData?.reduce((acc, schedule) => {
+        return acc + (schedule.cost ?? 0);
+    }, 0);
     return (
         <TripDetailForm
             tripData={tripData}
             scheduleData={scheduleData}
             todos={tripData.todos}
+            totalCost={totalCost ?? 0}
         />
     );
 }

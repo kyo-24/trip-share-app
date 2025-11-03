@@ -17,6 +17,7 @@ export async function createSchedule(formData: FormData, tripId: number) {
         const endStr = formData.get("endTime") as string;
         const title = formData.get("title");
         const description = formData.get("description");
+        const cost = formData.get("cost") as string | null;
         // バリデーション
         if (!dateStr || !startStr || !endStr || !title || !description) {
             throw new Error("Missing required fields");
@@ -30,6 +31,7 @@ export async function createSchedule(formData: FormData, tripId: number) {
                 title: String(title),
                 description: String(description),
                 tripId: Number(tripId),
+                cost: cost !== "" ? Number(cost) : null,
             },
         });
     } catch (error) {
@@ -48,6 +50,7 @@ export async function updateSchedule(
         description?: string;
         startTime?: string;
         endTime?: string;
+        cost?: string | null;
     }
 ) {
     try {
@@ -75,6 +78,7 @@ export async function updateSchedule(
                 endTime: data.endTime
                     ? new Date(`${data.endTime}:00+09:00`)
                     : undefined,
+                cost: data.cost !== "" ? Number(data.cost) : null,
             },
         });
 

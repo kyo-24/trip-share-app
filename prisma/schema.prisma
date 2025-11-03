@@ -101,6 +101,7 @@ model Schedule {
   tripId Int
   title String
   description String
+  cost Int?
   date DateTime
   startTime DateTime
   endTime DateTime

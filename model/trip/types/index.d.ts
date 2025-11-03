@@ -30,6 +30,7 @@ export type ScheduleItem = {
     endTime: Date;
     title: string;
     description: string;
+    cost: number | null;
 };
 
 export type Photo = {

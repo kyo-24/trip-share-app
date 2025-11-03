@@ -25,10 +25,12 @@ const TripDetailForm = ({
     tripData,
     scheduleData,
     todos,
+    totalCost,
 }: {
     tripData: tripDataProps;
     scheduleData: ScheduleItem[] | null;
     todos: Todo[];
+    totalCost: number;
 }) => {
     const coverImageUrl = tripData.fileName
         ? getCoverImage(tripData.fileName)
@@ -122,7 +124,7 @@ const TripDetailForm = ({
                             </TabsTrigger>
                         </TabsList>
 
-                        <Overview tripData={tripData} />
+                        <Overview tripData={tripData} totalCost={totalCost} />
                         <Schedule
                             scheduleData={scheduleData}
                             tripId={tripData.id}

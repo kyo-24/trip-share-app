@@ -61,13 +61,13 @@ const Schedule = ({
             const dateStr = formData.get("date") as string;
             const startStr = formData.get("startTime") as string;
             const endStr = formData.get("endTime") as string;
-
             await updateSchedule(editingSchedule.id, {
                 date: dateStr,
                 startTime: `${dateStr}T${startStr}`,
                 endTime: `${dateStr}T${endStr}`,
                 title: formData.get("title") as string,
                 description: formData.get("description") as string,
+                cost: formData.get("cost") as string,
             });
         } else {
             // 新規作成の場合
@@ -182,6 +182,23 @@ const Schedule = ({
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
+                                費用
+                            </label>
+                            <Input
+                                type="number"
+                                name="cost"
+                                defaultValue={
+                                    editingSchedule
+                                        ? editingSchedule.cost?.toString()
+                                        : ""
+                                }
+                                placeholder="予定の費用"
+                                className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
                                 詳細
                             </label>
                             <Textarea
@@ -270,6 +287,13 @@ const Schedule = ({
                                                                 {
                                                                     schedule.description
                                                                 }
+                                                            </p>
+                                                        )}
+                                                        {schedule.cost && (
+                                                            <p className="text-gray-600 mt-1 text-sm text-right">
+                                                                費用:　
+                                                                {schedule.cost.toLocaleString()}
+                                                                円
                                                             </p>
                                                         )}
                                                     </div>

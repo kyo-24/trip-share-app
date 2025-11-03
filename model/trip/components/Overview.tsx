@@ -4,7 +4,13 @@ import { Pencil } from "lucide-react";
 import Link from "next/link";
 import { tripDataProps } from "../types";
 
-const Overview = ({ tripData }: { tripData: tripDataProps }) => {
+const Overview = ({
+    tripData,
+    totalCost,
+}: {
+    tripData: tripDataProps;
+    totalCost: number;
+}) => {
     return (
         <TabsContent value="overview" className="mt-6">
             <div className="space-y-6">
@@ -45,6 +51,13 @@ const Overview = ({ tripData }: { tripData: tripDataProps }) => {
                     </div>
                     <div>
                         <label className="block text-sm font-bold text-gray-600">
+                            メンバー数
+                        </label>
+                        {/* メンバー数の取得は今後実装予定 */}
+                        <p className="mt-1 text-gray">1名</p>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-bold text-gray-600">
                             予算
                         </label>
                         <p className="mt-1 text-gray">
@@ -53,6 +66,15 @@ const Overview = ({ tripData }: { tripData: tripDataProps }) => {
                                 : ""}
                         </p>
                     </div>
+                    <div>
+                        <label className="block text-sm font-bold text-gray-600">
+                            合計費用（スケジュールに登録した費用の合計）
+                        </label>
+                        <p className="mt-1 text-gray">
+                            {totalCost ? totalCost.toLocaleString() : 0}円
+                        </p>
+                    </div>
+
                     <div>
                         <label className="block text-sm font-bold text-gray-600">
                             メモ
